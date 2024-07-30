@@ -1,38 +1,20 @@
-import Card from '@/app/components/card/card';
-import React from 'react';
+import CardsAndForms from '@/app/dashboard/[id]/cardsAndForms';
+import {getDashboardData} from '@/app/utils/api/dashboardApi';
+import {notFound} from 'next/navigation';
 
-type Props = {};
+export default async function Dashboard({params: {id}}: {params: {id: number}}) {
+  const dashboard = await getDashboardData(id);
 
-const cards = [
-  {
-    image: '/images/bread.webp',
-    title: 'Francisca',
-    description: 'I will bring bread',
-  },
-  {
-    image: '/images/fruit.webp',
-    title: 'Roxana',
-    description: 'I will bring fruit',
-  },
-  {
-    image: '/images/yogurt.png',
-    title: 'Benito',
-    description: 'I will bring yogurt',
-  },
-];
+  if (!dashboard) {
+    notFound();
+  }
 
-export default function Page({params}: {params: {id: string}}) {
+  const {cards, title} = dashboard;
+
   return (
     <div className='text-center'>
-      <h2 className='text-2xl font-bold mb-4 text-purple'>Benito&apos;s Picnic</h2>
-      <button className='m-5 border-2 border-purple-light border-solid py-2 px-4 rounded-lg bg-slate-100 text-purple hover:shadow-md hover:bg-transparent'>
-        Create New Card
-      </button>
-      <div className='flex flex-row flex-wrap items-center justify-center'>
-        {cards.map((card) => (
-          <Card key={card.title} {...card} />
-        ))}
-      </div>
+      <h2 className='text-2xl font-bold mb-4 text-purple'>{title}</h2>
+      <CardsAndForms dashboardId={id} cards={cards} />
     </div>
   );
 }

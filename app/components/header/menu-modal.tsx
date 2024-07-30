@@ -11,9 +11,9 @@ type Props = {
 
 export default function MenuModal({routes}: Props) {
   return (
-    <div className='absolute top-[56px] left-0 w-full divide-y divide-slate-200 divide-solid'>
+    <div className='absolute top-[56px] left-0 w-full divide-y divide-slate-200 divide-solid z-10 text-purple'>
       {routes.map((route) => (
-        <div key={route.name} className='px-2.5 py-4 text-center bg-green-light'>
+        <div key={route.name} className='px-2.5 py-4 text-center bg-green-light relative '>
           <Link href={route.url}>{route.name}</Link>
         </div>
       ))}

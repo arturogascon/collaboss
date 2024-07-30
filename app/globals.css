@@ -8,23 +8,8 @@
   --background-end-rgb: transparent;
 }
 
-/*
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: #67B045;
-    --background-end-rgb: #67B045;
-  }
-}
-*/
-
 body {
-   background: linear-gradient(
-    to bottom,
-    var(--background-start-rgb) 65%,
-    var(--background-end-rgb)
-  );
+   background: var(--background-start-rgb)
 }
 
 @layer utilities {
@@ -34,5 +19,16 @@ body {
 }
 
 main {
-  padding: 4px;
+  padding: .25rem;
+}
+
+.card-form label {
+  margin-bottom: .5rem;
+}
+
+form input {
+  height: 1.75rem;
+  margin-bottom: 1.125rem;
+  border: 1px solid rgba(142, 69, 176, .35);
+  border-radius: 4px;
 }

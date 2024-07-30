@@ -1,8 +1,9 @@
 'use client';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
 import MobileMenu from '@/app/components/header/mobile-menu/mobile-menu';
 import MenuModal from '@/app/components/header/menu-modal';
+import {usePathname} from 'next/navigation';
 
 type Props = {};
 
@@ -14,11 +15,21 @@ const routes = [
 
 export default function Header({}: Props) {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+
+  const path = usePathname();
+
+  useEffect(() => {
+    // Temporary validation till we have proper auth logic
+    if (path !== '/') {
+      setIsAuth(true);
+    }
+  }, [path]);
 
   return (
     <>
       {isOpenModal && <MenuModal routes={routes} />}
-      <header className='h-14 py-1.5 px-3 flex flex-row justify-between'>
+      <header className='h-14 py-2 px-3 flex flex-row justify-between'>
         <Image
           src='/collaboss-logo.png'
           width={100}
@@ -26,7 +37,7 @@ export default function Header({}: Props) {
           alt='Collaboss Logo'
           className='inline-block w-auto h-auto'
         />
-        <MobileMenu handleClick={() => setIsOpenModal(!isOpenModal)} />
+        {isAuth && <MobileMenu handleClick={() => setIsOpenModal(!isOpenModal)} />}
       </header>
     </>
   );
