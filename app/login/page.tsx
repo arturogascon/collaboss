@@ -1,16 +1,11 @@
 'use client';
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {useFormState} from 'react-dom';
 import {logIn} from '@/app/utils/serverActions/authActions';
 import MainButton from '@/app/components/buttons/MainButton';
 import {validateEmail} from '@/app/utils/string/fieldValidation';
+import {useFormState} from 'react-dom';
 
 interface LoginProps {}
-
-const initialState = {
-  error: '',
-  message: '',
-};
 
 type FormValues = {
   email: string;
@@ -18,14 +13,13 @@ type FormValues = {
 };
 
 export default function Login({}: LoginProps) {
-  const [state, formAction] = useFormState(logIn, initialState);
+  const [errorMessage, formAction, isPending] = useFormState(logIn, undefined);
   const [formValues, setFormValues] = useState<FormValues>({
     email: '',
     password: '',
   });
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
-  const serverError = state.error;
 
   useEffect(() => {
     if (isValidEmail && formValues.password) {
@@ -45,7 +39,7 @@ export default function Login({}: LoginProps) {
   return (
     <div className='py-8 px-9 text-purple'>
       <h3 className='text-2xl font-semibold text-center mb-4'>Log In</h3>
-      {serverError && <p className='text-xs text-red-500 mb-2'>{serverError}</p>}
+      {errorMessage && <p className='text-xs text-red-500 mb-2'>{errorMessage as string}</p>}
       <form action={formAction} className='flex flex-col'>
         <label className='text-sm font-semibold mb-1' htmlFor='email'>
           Email:
@@ -58,7 +52,7 @@ export default function Login({}: LoginProps) {
           Password:
         </label>
         <input type='password' id='password' name='password' required onChange={handleValueChange} />
-        <MainButton className='w-fit self-end' type='submit' disabled={isSubmitDisabled}>
+        <MainButton className='w-fit self-end' type='submit' disabled={isSubmitDisabled || isPending}>
           Log In
         </MainButton>
       </form>

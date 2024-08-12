@@ -10,7 +10,6 @@ type Props = {};
 const routes = [
   {name: 'Dashboard', url: '/dashboard'},
   {name: 'Profile', url: '/profile'},
-  {name: 'Logout', url: '/url'},
 ];
 
 export default function Header({}: Props) {

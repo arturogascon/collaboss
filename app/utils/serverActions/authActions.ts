@@ -1,11 +1,13 @@
 'use server';
 import {query} from '@/app/lib/db';
+import {getUser} from '@/app/utils/db/users';
 import {hashPassword} from '@/app/utils/hash/bcrypt';
-import {error} from 'console';
 import {RowDataPacket} from 'mysql2';
 import {redirect} from 'next/navigation';
+import {signIn, signOut} from '@/auth';
+import {AuthError} from 'next-auth';
 
-interface User {
+export interface User {
   name: string;
   email: string;
   password: string;
@@ -18,16 +20,9 @@ export async function signUp(prevState: any, formData: FormData) {
     password: formData.get('password') as string,
   };
 
-  const existentUserData = await query<RowDataPacket[]>(
-    `SELECT * FROM users
-    WHERE email = ?`,
-    [newUser.email]
-  );
+  const existentUser = await getUser(newUser.email);
 
-  const existenUsers = existentUserData[0] as RowDataPacket[];
-  const doesUserExists = existenUsers.find((user) => user.email === newUser.email);
-
-  if (doesUserExists) {
+  if (existentUser) {
     return {
       error: 'User email already exists',
     };
@@ -73,8 +68,21 @@ export async function logIn(prevState: any, formData: FormData) {
     password: formData.get('password') as string,
   };
 
-  return {
-    message: '',
-    error: '',
-  };
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
+}
+
+export async function logOut() {
+  await signOut();
 }

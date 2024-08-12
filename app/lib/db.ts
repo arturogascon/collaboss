@@ -5,9 +5,9 @@ async function query<T>(query: string, values?: any): Promise<[T, FieldPacket[]]
   noStore();
   try {
     const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'arturo',
-      password: 'sqlazo',
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
       database: 'collaboss',
     });
 

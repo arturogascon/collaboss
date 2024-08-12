@@ -5,11 +5,17 @@ interface DashBoardData {
   cards: Array<CardType>;
 }
 
+
 export async function getDashboardData(id: number): Promise<DashBoardData | undefined> {
   try {
     const data = await fetch(process.env.BASE_URL + '/api/dashboard/' + id);
     const cards = await getCardsData(id);
     const dashboard = await data.json();
+
+    if (!dashboard || !dashboard.data || !dashboard.data[0][0]) {
+      return undefined;
+    }
+
     const {title} = dashboard?.data[0][0];
 
     revalidatePath('/dashboard/' + id);

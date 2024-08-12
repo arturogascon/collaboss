@@ -12,8 +12,8 @@ export default async function Dashboard({params: {id}}: {params: {id: number}}) 
   const {cards, title} = dashboard;
 
   return (
-    <div className='text-center'>
-      <h2 className='text-2xl font-bold mb-4 text-purple'>{title}</h2>
+    <div className='text-center text-purple'>
+      <h2 className='text-2xl font-bold mb-4'>{title}</h2>
       <CardsAndForms dashboardId={id} cards={cards} />
     </div>
   );

@@ -30,9 +30,9 @@ export default function CreateCardForm({onClose, dashboardId}: CreateCardFormPro
         <form action={formAction} className='flex flex-col text-left card-form'>
           <input type='text' name='dashboardId' hidden defaultValue={dashboardId} />
           <label htmlFor='title'>Title:</label>
-          <input id='title' type='text' name='title' className='inline-block' />
+          <input id='title' type='text' name='title' className='inline-block' autoComplete='off' />
           <label htmlFor='description'>Description:</label>
-          <input id='description' type='text' name='description' className='inline-block' />
+          <input id='description' type='text' name='description' className='inline-block' autoComplete='off' />
           <ImagePicker name='card-image' />
           <MainButton type='submit' className='w-fit self-end'>
             Create
