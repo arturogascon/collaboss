@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from '@/app/components/header/header';
+import Header from "@/app/components/header/header";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'CollaBoss',
-  description: 'The best app in the world to collab with friends',
+  title: "CollaBoss",
+  description: "The best app in the world to collab with friends",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
-    <html lang='en'>
+    <html lang="en">
       <body className={inter.className}>
-        <Header />
+        <Header session={session} />
         {children}
       </body>
     </html>

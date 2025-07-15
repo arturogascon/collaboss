@@ -1,9 +1,15 @@
-import NextAuth from 'next-auth';
-import {authConfig} from './auth.config';
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
 export default NextAuth(authConfig).auth;
 
 export const config = {
   // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-  matcher: ['/dashboard/create/:id', '/profile'],
+  matcher: [
+    "/dashboard",
+    "/dashboard/create/:id",
+    "/profile",
+    "/login",
+    "/signup",
+  ],
 };

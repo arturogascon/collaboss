@@ -1,11 +1,17 @@
 import React from 'react';
 
 interface UserProps {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
-export default function User({params: {userId}}: UserProps) {
+export default async function User(props: UserProps) {
+  const params = await props.params;
+
+  const {
+    userId
+  } = params;
+
   return <div>User</div>;
 }

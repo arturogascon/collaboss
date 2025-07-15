@@ -1,30 +1,31 @@
-'use server';
-import {query} from '@/app/lib/db';
-import {getUser} from '@/app/utils/db/users';
-import {hashPassword} from '@/app/utils/hash/bcrypt';
-import {RowDataPacket} from 'mysql2';
-import {redirect} from 'next/navigation';
-import {signIn, signOut} from '@/auth';
-import {AuthError} from 'next-auth';
+"use server";
+import { query } from "@/app/lib/db";
+import { getUser } from "@/app/utils/db/users";
+import { hashPassword } from "@/app/utils/hash/bcrypt";
+import { RowDataPacket } from "mysql2";
+import { redirect } from "next/navigation";
+import { signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 
 export interface User {
+  id: string;
   name: string;
   email: string;
   password: string;
 }
 
 export async function signUp(prevState: any, formData: FormData) {
-  const newUser: User = {
-    name: formData.get('name') as string,
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  const newUser = {
+    name: formData.get("name") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
   };
 
   const existentUser = await getUser(newUser.email);
 
   if (existentUser) {
     return {
-      error: 'User email already exists',
+      error: "User email already exists",
     };
   }
 
@@ -48,35 +49,27 @@ export async function signUp(prevState: any, formData: FormData) {
     );
   } catch (error) {
     return {
-      error: 'Server error. Try again!',
+      error: "Server error. Try again!",
     };
   }
 
+  await signIn("credentials", formData);
+
   const addedUserId = (addedUserData as RowDataPacket[])[0][0].id;
 
-  redirect('/user/' + addedUserId);
-}
-
-interface LoginData {
-  email: string;
-  password: string;
+  redirect("/user/" + addedUserId);
 }
 
 export async function logIn(prevState: any, formData: FormData) {
-  const loginData: LoginData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  };
-
   try {
-    await signIn('credentials', formData);
+    await signIn("credentials", formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
+        case "CredentialsSignin":
+          return "Invalid credentials.";
         default:
-          return 'Something went wrong.';
+          return "Something went wrong.";
       }
     }
     throw error;

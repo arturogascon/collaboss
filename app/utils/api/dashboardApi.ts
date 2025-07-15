@@ -1,24 +1,25 @@
-import {CardType} from '@/app/utils/api/cardApi';
-import {revalidatePath} from 'next/cache';
+import { CardType, getCardsData } from "@/app/utils/api/cardApi";
+import { getUser } from "../db/users";
 interface DashBoardData {
   title: string;
   cards: Array<CardType>;
 }
 
-
-export async function getDashboardData(id: number): Promise<DashBoardData | undefined> {
+export async function getDashboardData(
+  id: number
+): Promise<DashBoardData | undefined> {
   try {
-    const data = await fetch(process.env.BASE_URL + '/api/dashboard/' + id);
+    const dashboardData = await fetch(
+      process.env.BASE_URL + "/api/dashboard/" + id
+    );
     const cards = await getCardsData(id);
-    const dashboard = await data.json();
+    const dashboard = await dashboardData.json();
 
     if (!dashboard || !dashboard.data || !dashboard.data[0][0]) {
       return undefined;
     }
 
-    const {title} = dashboard?.data[0][0];
-
-    revalidatePath('/dashboard/' + id);
+    const { title } = dashboard?.data[0][0];
 
     return {
       title,
@@ -29,13 +30,29 @@ export async function getDashboardData(id: number): Promise<DashBoardData | unde
   }
 }
 
-export async function getCardsData(dashboardId: number) {
+export interface Dashboard {
+  id: number;
+  userId: number;
+  title: string;
+  date: string;
+}
+
+export async function getAllDashboardsFromUser(
+  email: string
+): Promise<Array<Dashboard> | undefined> {
   try {
-    const data = await fetch(process.env.BASE_URL + '/api/cards/' + dashboardId);
-    const dashboard = await data.json();
-    const cards = dashboard?.data[0];
-    return cards;
+    const user = await getUser(email);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const dashboardsResponse = await fetch(
+      process.env.BASE_URL + "/api/dashboard/user/" + user.id
+    );
+    const dashboardsData = await dashboardsResponse.json();
+
+    return dashboardsData.data[0];
   } catch (error) {
+    console.log(error);
     return undefined;
   }
 }

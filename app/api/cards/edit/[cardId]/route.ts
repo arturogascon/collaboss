@@ -1,7 +1,13 @@
 import {query} from '@/app/lib/db';
 import {RowDataPacket} from 'mysql2';
 
-export async function PATCH(request: Request, {params: {cardId}}: {params: {cardId: string}}) {
+export async function PATCH(request: Request, props: {params: Promise<{cardId: string}>}) {
+  const params = await props.params;
+
+  const {
+    cardId
+  } = params;
+
   let data = await query<RowDataPacket[]>('SELECT * FROM cards WHERE card_id = ?;', [cardId]);
 
   console.log(data);

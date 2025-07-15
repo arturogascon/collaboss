@@ -1,7 +1,13 @@
 import {query} from '@/app/lib/db';
 import {RowDataPacket} from 'mysql2';
 
-export async function DELETE(request: Request, {params: {cardId}}: {params: {cardId: string}}) {
+export async function DELETE(request: Request, props: {params: Promise<{cardId: string}>}) {
+  const params = await props.params;
+
+  const {
+    cardId
+  } = params;
+
   await query<RowDataPacket[]>(`DELETE FROM cards WHERE id = ?;`, [cardId]);
 
   const response = new Response('OK', {

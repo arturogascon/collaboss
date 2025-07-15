@@ -11,6 +11,7 @@ async function query<T>(query: string, values?: any): Promise<[T, FieldPacket[]]
       database: 'collaboss',
     });
 
+    connection.config.namedPlaceholders = true;
     const [rows, fields] = await connection.execute<T & RowDataPacket[]>(query, values);
 
     connection.end();

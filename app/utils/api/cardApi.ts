@@ -19,14 +19,14 @@ export async function deleteCard(cardId: number, dashboardId: number) {
     return undefined;
   }
 }
-/* 
-export async function getCardData(cardId: number, dashboardId: number) {
+
+export async function getCardsData(dashboardId: number) {
   try {
-    await fetch('/api/cards/edit/' + cardId, {
-      method: 'PATCH',
-    });
-    revalidatePath('/dashboard/' + dashboardId);
+    const data = await fetch(process.env.BASE_URL + '/api/cards/' + dashboardId);
+    const dashboard = await data.json();
+    const cards = dashboard?.data[0];
+    return cards;
   } catch (error) {
     return undefined;
   }
-} */
+}
