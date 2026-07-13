@@ -2,14 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
- :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: rgb(234, 244, 229);
-  --background-end-rgb: transparent;
-}
-
 body {
-   background: var(--background-start-rgb)
+  @apply bg-brand-canvas;
 }
 
 @layer utilities {
@@ -18,17 +12,13 @@ body {
   }
 }
 
-main {
-  padding: .25rem;
-}
-
 .card-form label {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 form input {
   height: 1.75rem;
   margin-bottom: 1.125rem;
-  border: 1px solid rgba(142, 69, 176, .35);
+  border: 1px solid rgba(142, 69, 176, 0.35);
   border-radius: 4px;
 }
