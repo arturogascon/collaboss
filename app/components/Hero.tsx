@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight, FiPlay } from "react-icons/fi";
 import { FaCrown } from "react-icons/fa";
+import LinkButton from "@/app/components/buttons/LinkButton";
 
 type SongCardData = {
   title: string;
@@ -194,13 +195,13 @@ function SongCard({
 function CTAButtons() {
   return (
     <div className="flex flex-wrap items-center gap-4 md:gap-5 lg:gap-6">
-      <Link
+      <LinkButton
         href="/signup"
-        className="flex items-center gap-2 rounded-bl-[28px] rounded-br-[8px] rounded-tl-[8px] rounded-tr-[28px] border-2 border-brand-outline bg-gradient-to-br from-brand-purple to-brand-purple-dark px-7 py-4 font-heading text-base font-semibold text-white shadow-lg shadow-brand-purple/25"
+        icon={<FiArrowRight size={18} />}
+        iconPosition="right"
       >
         Get Started
-        <FiArrowRight size={18} />
-      </Link>
+      </LinkButton>
       <Link
         href="#"
         className="flex items-center gap-1.5 font-heading text-base font-semibold text-brand-purple underline hidden"

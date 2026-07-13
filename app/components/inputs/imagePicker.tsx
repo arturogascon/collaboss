@@ -1,5 +1,5 @@
 'use client';
-import MainButton from '@/app/components/buttons/MainButton';
+import Button from '@/app/components/buttons/Button';
 import {ChangeEvent, LegacyRef, MutableRefObject, ReactEventHandler, useRef, useState} from 'react';
 
 interface ImagePickerProps {
@@ -38,9 +38,9 @@ export default function ImagePicker({label, name, value}: ImagePickerProps) {
         ref={inputFileRef as MutableRefObject<HTMLInputElement | null>}
         onChange={handleImageChange}
       />
-      <MainButton type='button' className='py-1 mb-1.5' onClick={handleButtonClick}>
+      <Button type='button' className='py-1 mb-1.5' onClick={handleButtonClick}>
         Pick an image
-      </MainButton>
+      </Button>
       <p className='pl-1.5 text-sm'>{pickedImage ? pickedImage : 'No picked image'}</p>
     </div>
   );

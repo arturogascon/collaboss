@@ -1,7 +1,7 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { logIn } from "@/app/utils/serverActions/authActions";
-import MainButton from "@/app/components/buttons/MainButton";
+import Button from "@/app/components/buttons/Button";
 import { validateEmail } from "@/app/utils/string/fieldValidation";
 import { useActionState } from "react";
 import Input from "../components/inputs/Input";
@@ -64,13 +64,13 @@ export default function Login({}: LoginProps) {
           required
           onChange={handleValueChange}
         />
-        <MainButton
+        <Button
           className="w-fit self-end"
           type="submit"
           disabled={isSubmitDisabled || isPending}
         >
           Log In
-        </MainButton>
+        </Button>
       </form>
     </div>
   );

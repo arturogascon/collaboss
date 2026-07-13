@@ -1,6 +1,6 @@
 "use client";
 import { useState, ChangeEvent, useEffect } from "react";
-import MainButton from "@/app/components/buttons/MainButton";
+import Button from "@/app/components/buttons/Button";
 import { useActionState } from "react";
 import { signUp } from "@/app/utils/serverActions/authActions";
 import { validateEmail } from "@/app/utils/string/fieldValidation";
@@ -144,13 +144,13 @@ export default function SignUp({}: SignUpProps) {
             Passwords does not match
           </p>
         )}
-        <MainButton
+        <Button
           className="w-fit self-end"
           type="submit"
           disabled={isSubmitDisabled}
         >
           Sign Up
-        </MainButton>
+        </Button>
       </form>
     </div>
   );

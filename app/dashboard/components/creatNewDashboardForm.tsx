@@ -1,7 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useActionState } from "react";
-import MainButton from "@/app/components/buttons/MainButton";
+import Button from "@/app/components/buttons/Button";
 import { createDashboard } from "@/app/utils/serverActions/dashboardActions";
 import { TiPlus, TiMinus } from "react-icons/ti";
 
@@ -70,9 +70,9 @@ function CreateNewDashboardForm({ userId }: UserIdProps) {
           aria-label="title"
           placeholder="Title"
         />
-        <MainButton type="submit" className="w-fit self-end">
+        <Button type="submit" className="w-fit self-end">
           Create
-        </MainButton>
+        </Button>
       </form>
     </div>
   );

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { TiTimesOutline } from "react-icons/ti";
 import { editCard } from "@/app/utils/serverActions/cardActions";
-import MainButton from "@/app/components/buttons/MainButton";
+import Button from "@/app/components/buttons/Button";
 import ImagePicker from "@/app/components/inputs/imagePicker";
 import { useActionState } from "react";
 import { CardType } from "@/app/utils/api/cardApi";
@@ -74,9 +74,9 @@ export default function EditCardForm({
             onChange={(e) => onValueChange("description", e.target.value)}
           />
           <ImagePicker name="card-image" value={formValues.image} />
-          <MainButton type="submit" className="w-fit self-end">
+          <Button type="submit" className="w-fit self-end">
             Edit
-          </MainButton>
+          </Button>
         </form>
       )}
     </div>

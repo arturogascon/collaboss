@@ -1,41 +1,27 @@
 import Link from "next/link";
-import { MouseEventHandler, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { buttonBaseClassName, IconPosition } from "@/app/components/buttons/buttonStyles";
 
-interface LinkButtonProps {
-  children: ReactNode;
+type LinkButtonProps = {
   href: string;
-  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  children: ReactNode;
+  icon?: ReactNode;
+  iconPosition?: IconPosition;
   className?: string;
-  disabled?: boolean;
-  disableText?: string;
-}
+};
 
 export default function LinkButton({
-  children,
-  onClick,
   href,
+  children,
+  icon,
+  iconPosition = "right",
   className = "",
-  disabled = false,
-  disableText = "",
 }: LinkButtonProps) {
-  return disabled ? (
-    <button
-      className={`border-2 border-slate-300 border-solid py-2 px-4 
-        rounded-lg bg-transparent text-slate-300
-        cursor-not-allowed ${className}`}
-      disabled
-    >
-      {disableText}
-    </button>
-  ) : (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={`border-2 border-purple-light border-solid py-2 px-4 
-      rounded-lg bg-slate-100 text-purple hover:shadow-md hover:bg-transparent 
-      cursor-pointer ${className}`}
-    >
+  return (
+    <Link href={href} className={`${buttonBaseClassName} ${className}`}>
+      {icon && iconPosition === "left" && icon}
       {children}
+      {icon && iconPosition === "right" && icon}
     </Link>
   );
 }

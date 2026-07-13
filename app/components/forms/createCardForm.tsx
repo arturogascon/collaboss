@@ -1,7 +1,7 @@
 "use client";
 import { TiTimesOutline } from "react-icons/ti";
 import { createCard } from "@/app/utils/serverActions/cardActions";
-import MainButton from "@/app/components/buttons/MainButton";
+import Button from "@/app/components/buttons/Button";
 import ImagePicker from "@/app/components/inputs/imagePicker";
 import { useActionState } from "react";
 
@@ -54,9 +54,9 @@ export default function CreateCardForm({
             autoComplete="off"
           />
           <ImagePicker name="card-image" />
-          <MainButton type="submit" className="w-fit self-end">
+          <Button type="submit" className="w-fit self-end">
             Create
-          </MainButton>
+          </Button>
         </form>
       )}
     </div>
