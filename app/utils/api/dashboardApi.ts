@@ -1,16 +1,16 @@
 import { CardType, getCardsData } from "@/app/utils/api/cardApi";
-import { getUser } from "../db/users";
+import { getUserByEmail } from "../db/users";
 interface DashBoardData {
   title: string;
   cards: Array<CardType>;
 }
 
 export async function getDashboardData(
-  id: number
+  id: number,
 ): Promise<DashBoardData | undefined> {
   try {
     const dashboardData = await fetch(
-      process.env.BASE_URL + "/api/dashboard/" + id
+      process.env.BASE_URL + "/api/dashboard/" + id,
     );
     const cards = await getCardsData(id);
     const dashboard = await dashboardData.json();
@@ -38,16 +38,27 @@ export interface Dashboard {
 }
 
 export async function getAllDashboardsFromUser(
-  email: string
+  email: string,
 ): Promise<Array<Dashboard> | undefined> {
   try {
-    const user = await getUser(email);
+    const user = await getUserByEmail(email);
     if (!user) {
       throw new Error("User not found");
     }
     const dashboardsResponse = await fetch(
-      process.env.BASE_URL + "/api/dashboard/user/" + user.id
+      process.env.BASE_URL + "/api/dashboard/user/" + user.id,
     );
+
+    if (!dashboardsResponse.ok) {
+      const errorText = await dashboardsResponse.text();
+      console.error(
+        "Dashboard API error:",
+        dashboardsResponse.status,
+        errorText,
+      );
+      throw new Error("Failed to fetch dashboards");
+    }
+
     const dashboardsData = await dashboardsResponse.json();
 
     return dashboardsData.data[0];

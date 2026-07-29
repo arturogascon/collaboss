@@ -1,25 +1,31 @@
-import mysql, {FieldPacket, RowDataPacket} from 'mysql2/promise';
-import {unstable_noStore as noStore} from 'next/cache';
+import mysql, { FieldPacket, RowDataPacket } from "mysql2/promise";
+import { unstable_noStore as noStore } from "next/cache";
 
-async function query<T>(query: string, values?: any): Promise<[T, FieldPacket[]] | string> {
+async function query<T>(
+  query: string,
+  values?: any,
+): Promise<[T, FieldPacket[]]> {
   noStore();
   try {
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: 'collaboss',
+      database: "collaboss",
     });
 
     connection.config.namedPlaceholders = true;
-    const [rows, fields] = await connection.execute<T & RowDataPacket[]>(query, values);
+    const [rows, fields] = await connection.execute<T & RowDataPacket[]>(
+      query,
+      values,
+    );
 
     connection.end();
 
     return [rows, fields];
   } catch (error) {
-    throw new Error('Failed to fetch data');
+    throw new Error("Failed to fetch data");
   }
 }
 
-export {query};
+export { query };

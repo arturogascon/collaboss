@@ -31,9 +31,13 @@ export default function Header({ session }: Props) {
     return () => {
       setIsOpenModal(false);
     };
-  }, [path]);
+  }, []);
 
-  const routes = session ? authRoutes : noAuthRoutes;
+  const routes = (session ? authRoutes : noAuthRoutes).filter(
+    (route) => route.url !== path,
+  );
+
+  console.log(path);
 
   return (
     <>

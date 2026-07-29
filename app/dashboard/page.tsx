@@ -11,11 +11,11 @@ type Props = {};
 
 export default async function Dashboard({}: Props) {
   const session = await auth();
-  let dashboards: Array<DashboardType> | undefined;
 
-  if (session?.user?.email) {
-    dashboards = await getAllDashboardsFromUser(session.user.email);
+  if (!session?.user?.email) {
+    return { error: "Not authenticated", message: "" };
   }
+  let dashboards = await getAllDashboardsFromUser(session.user.email);
 
   if (!dashboards || !dashboards.length) {
     return (
