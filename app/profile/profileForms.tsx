@@ -1,6 +1,7 @@
 "use client";
 import { useState, ChangeEvent, useActionState } from "react";
 import Button from "@/app/components/buttons/Button";
+import Input from "@/app/components/inputs/Input";
 import ErrorBanner from "@/app/components/banners/ErrorBanner";
 import SuccessBanner from "@/app/components/banners/SuccessBanner";
 import {
@@ -22,16 +23,7 @@ type Props = {
   email: string;
 };
 
-const inputBaseClassName =
-  "rounded-xl bg-brand-canvas px-3.5 py-3 font-body text-[15px] font-medium text-brand-ink outline-none focus:border-brand-purple disabled:cursor-not-allowed disabled:opacity-50";
-const getInputClassName = (hasError: boolean) =>
-  hasError
-    ? `${inputBaseClassName} border-2 border-brand-coral`
-    : `${inputBaseClassName} border-[1.5px] border-brand-border`;
-const labelClassName =
-  "font-body text-[13px] font-semibold text-brand-ink-soft";
-const errorClassName = "font-body text-xs font-medium text-[#E4483F]";
-const fieldWrapperClassName = "flex flex-col gap-1.5 md:flex-1";
+const halfWidthFieldClassName = "md:flex-1";
 const sectionTitleClassName = "font-heading text-lg font-bold text-brand-ink";
 
 export default function ProfileForms({ username, email }: Props) {
@@ -169,45 +161,25 @@ export default function ProfileForms({ username, email }: Props) {
 
           <form action={profileFormAction} className="flex flex-col gap-5">
             <div className="flex flex-col gap-5 md:flex-row md:gap-6">
-              <div className={fieldWrapperClassName}>
-                <label className={labelClassName} htmlFor="username">
-                  Username:
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  defaultValue={username}
-                  onChange={handleProfileValueChange}
-                  autoComplete="off"
-                  className={getInputClassName(
-                    Boolean(profileLiveErrors.username),
-                  )}
-                />
-                {profileLiveErrors.username && (
-                  <p className={errorClassName}>{profileLiveErrors.username}</p>
-                )}
-              </div>
+              <Input
+                label="Username:"
+                type="text"
+                name="username"
+                defaultValue={username}
+                onChange={handleProfileValueChange}
+                error={profileLiveErrors.username}
+                wrapperClassName={halfWidthFieldClassName}
+              />
 
-              <div className={fieldWrapperClassName}>
-                <label className={labelClassName} htmlFor="email">
-                  Email:
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  defaultValue={email}
-                  onChange={handleProfileValueChange}
-                  autoComplete="off"
-                  className={getInputClassName(
-                    Boolean(profileLiveErrors.email),
-                  )}
-                />
-                {profileLiveErrors.email && (
-                  <p className={errorClassName}>{profileLiveErrors.email}</p>
-                )}
-              </div>
+              <Input
+                label="Email:"
+                type="email"
+                name="email"
+                defaultValue={email}
+                onChange={handleProfileValueChange}
+                error={profileLiveErrors.email}
+                wrapperClassName={halfWidthFieldClassName}
+              />
             </div>
 
             <div className="flex md:justify-end">
@@ -233,70 +205,37 @@ export default function ProfileForms({ username, email }: Props) {
           )}
 
           <form action={passwordFormAction} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClassName} htmlFor="current_password">
-                Current Password:
-              </label>
-              <input
-                type="password"
-                id="current_password"
-                name="current_password"
-                onChange={handlePasswordValueChange}
-                className={getInputClassName(
-                  Boolean(passwordLiveErrors.current_password),
-                )}
-              />
-              {passwordLiveErrors.current_password && (
-                <p className={errorClassName}>
-                  {passwordLiveErrors.current_password}
-                </p>
-              )}
-            </div>
+            <Input
+              label="Current Password:"
+              type="password"
+              name="current_password"
+              onChange={handlePasswordValueChange}
+              error={passwordLiveErrors.current_password}
+            />
 
             <div className="flex flex-col gap-5 md:flex-row md:gap-6">
-              <div className={fieldWrapperClassName}>
-                <label className={labelClassName} htmlFor="password">
-                  New Password:
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  onChange={handlePasswordValueChange}
-                  className={getInputClassName(
-                    Boolean(passwordLiveErrors.password) ||
-                      isNewPasswordSameAsCurrent,
-                  )}
-                />
-                {passwordLiveErrors.password ? (
-                  <p className={errorClassName}>
-                    {passwordLiveErrors.password}
-                  </p>
-                ) : (
-                  isNewPasswordSameAsCurrent && (
-                    <p className={errorClassName}>
-                      New password must be different from current password
-                    </p>
-                  )
-                )}
-              </div>
+              <Input
+                label="New Password:"
+                type="password"
+                name="password"
+                onChange={handlePasswordValueChange}
+                error={
+                  passwordLiveErrors.password ||
+                  (isNewPasswordSameAsCurrent &&
+                    "New password must be different from current password")
+                }
+                wrapperClassName={halfWidthFieldClassName}
+              />
 
-              <div className={fieldWrapperClassName}>
-                <label className={labelClassName} htmlFor="re_password">
-                  Confirm New Password:
-                </label>
-                <input
-                  type="password"
-                  id="re_password"
-                  name="re_password"
-                  onChange={handlePasswordValueChange}
-                  disabled={!isValidNewPassword}
-                  className={getInputClassName(!doesPasswordsMatch)}
-                />
-                {!doesPasswordsMatch && (
-                  <p className={errorClassName}>Passwords does not match</p>
-                )}
-              </div>
+              <Input
+                label="Confirm New Password:"
+                type="password"
+                name="re_password"
+                onChange={handlePasswordValueChange}
+                disabled={!isValidNewPassword}
+                error={!doesPasswordsMatch && "Passwords does not match"}
+                wrapperClassName={halfWidthFieldClassName}
+              />
             </div>
 
             <div className="flex md:justify-end">

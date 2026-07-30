@@ -1,6 +1,7 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import Button from "@/app/components/buttons/Button";
+import Input from "@/app/components/inputs/Input";
 import { useActionState } from "react";
 import { LuCircleAlert } from "react-icons/lu";
 import { signUp } from "@/app/utils/serverActions/authActions";
@@ -57,14 +58,6 @@ export default function SignUp() {
     }));
   };
 
-  const inputBaseClassName =
-    "rounded-xl bg-brand-canvas px-3.5 py-3 font-body text-[15px] font-medium text-brand-ink outline-none focus:border-brand-purple disabled:cursor-not-allowed disabled:opacity-50";
-  const getInputClassName = (hasError: boolean) =>
-    hasError
-      ? `${inputBaseClassName} border-2 border-brand-coral`
-      : `${inputBaseClassName} border-[1.5px] border-brand-border`;
-  const labelClassName =
-    "font-body text-[13px] font-semibold text-brand-ink-soft";
   const errorClassName = "font-body text-xs font-medium text-[#E4483F]";
 
   return (
@@ -80,76 +73,42 @@ export default function SignUp() {
           </div>
         )}
         <form action={formAction} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClassName} htmlFor="username">
-              Username:
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              required
-              onChange={handleValueChange}
-              autoComplete="off"
-              className={getInputClassName(Boolean(liveErrors.username))}
-            />
-            {liveErrors.username && (
-              <p className={errorClassName}>{liveErrors.username}</p>
-            )}
-          </div>
+          <Input
+            label="Username:"
+            type="text"
+            name="username"
+            required
+            onChange={handleValueChange}
+            error={liveErrors.username}
+          />
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClassName} htmlFor="email">
-              Email:
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              onChange={handleValueChange}
-              autoComplete="off"
-              className={getInputClassName(Boolean(liveErrors.email))}
-            />
-            {liveErrors.email && (
-              <p className={errorClassName}>{liveErrors.email}</p>
-            )}
-          </div>
+          <Input
+            label="Email:"
+            type="email"
+            name="email"
+            required
+            onChange={handleValueChange}
+            error={liveErrors.email}
+          />
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClassName} htmlFor="password">
-              Create Password:
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              onChange={handleValueChange}
-              className={getInputClassName(Boolean(liveErrors.password))}
-            />
-            {liveErrors.password && (
-              <p className={errorClassName}>{liveErrors.password}</p>
-            )}
-          </div>
+          <Input
+            label="Create Password:"
+            type="password"
+            name="password"
+            required
+            onChange={handleValueChange}
+            error={liveErrors.password}
+          />
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClassName} htmlFor="re_password">
-              Retype Password:
-            </label>
-            <input
-              type="password"
-              id="re_password"
-              name="re_password"
-              required
-              onChange={handleValueChange}
-              disabled={!isValidPassword}
-              className={getInputClassName(!doesPasswordsMatch)}
-            />
-            {!doesPasswordsMatch && (
-              <p className={errorClassName}>Passwords does not match</p>
-            )}
-          </div>
+          <Input
+            label="Retype Password:"
+            type="password"
+            name="re_password"
+            required
+            onChange={handleValueChange}
+            disabled={!isValidPassword}
+            error={!doesPasswordsMatch && "Passwords does not match"}
+          />
 
           <Button
             className="w-fit self-end"
