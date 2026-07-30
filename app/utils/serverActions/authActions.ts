@@ -96,7 +96,8 @@ export async function logIn(_prevState: any, formData: FormData) {
 }
 
 export async function logOut() {
-  await signOut();
+  await signOut({ redirect: false });
+  redirect("/login");
 }
 
 export async function updateProfile(
