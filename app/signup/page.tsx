@@ -3,7 +3,8 @@ import { useState, ChangeEvent } from "react";
 import Button from "@/app/components/buttons/Button";
 import { useActionState } from "react";
 import { LuCircleAlert } from "react-icons/lu";
-import { initialState, signUp } from "@/app/utils/serverActions/authActions";
+import { signUp } from "@/app/utils/serverActions/authActions";
+import { initialState } from "@/app/utils/types/serverActions.types";
 import {
   SignUpFormKey,
   SignUpBaseSchema,
@@ -80,20 +81,20 @@ export default function SignUp() {
         )}
         <form action={formAction} className="flex flex-col gap-6">
           <div className="flex flex-col gap-1.5">
-            <label className={labelClassName} htmlFor="name">
-              Name:
+            <label className={labelClassName} htmlFor="username">
+              Username:
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="username"
+              name="username"
               required
               onChange={handleValueChange}
               autoComplete="off"
-              className={getInputClassName(Boolean(liveErrors.name))}
+              className={getInputClassName(Boolean(liveErrors.username))}
             />
-            {liveErrors.name && (
-              <p className={errorClassName}>{liveErrors.name}</p>
+            {liveErrors.username && (
+              <p className={errorClassName}>{liveErrors.username}</p>
             )}
           </div>
 

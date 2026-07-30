@@ -31,11 +31,14 @@ export const { auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
       }
+
       return token;
     },
     session({ session, token }) {
       session.user.id = token.id as string;
+      session.user.username = token.username as string;
       return session;
     },
   },

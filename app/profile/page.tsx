@@ -1,11 +1,20 @@
-import React from 'react'
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import ProfileForms from "@/app/profile/profileForms";
+import { getUserById } from "../utils/db/users";
 
-type Props = {}
+export default async function Profile() {
+  const session = await auth();
 
-function Profile({}: Props) {
-  return (
-    <div>I am a profile page</div>
-  )
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const user = await getUserById(session.user.id);
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  return <ProfileForms username={user.username} email={user.email} />;
 }
-
-export default Profile

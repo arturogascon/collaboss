@@ -1,5 +1,10 @@
 "use server";
-import { getUserByEmail, saveNewUser, updateUser } from "@/app/utils/db/users";
+import {
+  getUserByEmail,
+  saveNewUser,
+  updatePassword,
+  updateUser,
+} from "@/app/utils/db/users";
 import { comparePasswords, hashPassword } from "@/app/utils/hash/bcrypt";
 import { redirect } from "next/navigation";
 import { auth, signIn, signOut } from "@/auth";
@@ -27,7 +32,7 @@ export async function signUp(
   }
 
   const newUser = {
-    name: result.data.name,
+    username: result.data.username,
     email: result.data.email,
     password: result.data.password,
   };
@@ -108,13 +113,13 @@ export async function updateProfile(
     };
   }
 
-  if (!result.data.name && !result.data.email) {
+  if (!result.data.username && !result.data.email) {
     return { error: "No changes to update", message: "" };
   }
 
   const session = await auth();
 
-  if (!session?.user?.id || !session.user.email || !session.user.name) {
+  if (!session?.user?.id || !session.user.email || !session.user.username) {
     return { error: "Not authenticated", message: "" };
   }
 
@@ -127,7 +132,7 @@ export async function updateProfile(
 
   const updateUserData = {
     id: session.user.id,
-    name: result.data.name ?? session.user.name,
+    username: result.data.username ?? session.user.username,
     email: result.data.email ?? session.user.email,
   };
 
@@ -192,8 +197,9 @@ export async function changePassword(
   };
 
   try {
-    await updateUser(updateUserData);
+    await updatePassword(updateUserData);
   } catch (error) {
+    console.log(error);
     return {
       error: "Server error. Try again!",
       message: "",
