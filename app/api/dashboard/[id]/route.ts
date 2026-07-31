@@ -1,4 +1,4 @@
-import {query} from '@/app/lib/db';
+import {query} from '@/app/utils/db/query';
 import {RowDataPacket} from 'mysql2';
 
 export async function GET(request: Request, props: {params: Promise<{id: string}>}) {

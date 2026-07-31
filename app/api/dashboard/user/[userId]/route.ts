@@ -1,4 +1,4 @@
-import {query} from '@/app/lib/db';
+import {query} from '@/app/utils/db/query';
 import {RowDataPacket} from 'mysql2';
 
 export async function GET(request: Request, props: {params: Promise<{userId: string}>}) {
@@ -8,6 +8,6 @@ export async function GET(request: Request, props: {params: Promise<{userId: str
     userId
   } = params;
 
-  const dashboardsData = await query<RowDataPacket[]>('SELECT * FROM dashboards WHERE userId = ?;', [userId]);
+  const dashboardsData = await query<RowDataPacket[]>('SELECT id, user_id AS userId, title, date FROM dashboards WHERE user_id = ?;', [userId]);
   return Response.json({data: dashboardsData});
 }

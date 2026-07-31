@@ -1,7 +1,7 @@
 'use server';
 import slugify from 'slugify';
 import fs from 'node:fs';
-import {query} from '@/app/lib/db';
+import {query} from '@/app/utils/db/query';
 import {RowDataPacket} from 'mysql2';
 import {revalidatePath} from 'next/cache';
 

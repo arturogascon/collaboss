@@ -1,6 +1,6 @@
 "use server";
 
-import { query } from "@/app/lib/db";
+import { query } from "@/app/utils/db/query";
 import { RowDataPacket } from "mysql2";
 import { revalidatePath } from "next/cache";
 
@@ -12,7 +12,7 @@ export async function createDashboard(prevState: any, formData: FormData) {
     };
 
     await query<RowDataPacket[]>(
-      `INSERT INTO dashboards (userId, title) 
+      `INSERT INTO dashboards (user_id, title)
     VALUES (?, ?);`,
       [newDashboardValues.userId, newDashboardValues.title]
     );

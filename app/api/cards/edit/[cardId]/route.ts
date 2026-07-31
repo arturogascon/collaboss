@@ -1,4 +1,4 @@
-import {query} from '@/app/lib/db';
+import {query} from '@/app/utils/db/query';
 import {RowDataPacket} from 'mysql2';
 
 export async function PATCH(request: Request, props: {params: Promise<{cardId: string}>}) {

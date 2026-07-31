@@ -1,4 +1,4 @@
-import { query } from "@/app/lib/db";
+import { query } from "@/app/utils/db/query";
 import { UserType } from "@/app/schemas/user.schema";
 import { RowDataPacket } from "mysql2";
 import { User } from "../types/user.types";
