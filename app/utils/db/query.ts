@@ -1,10 +1,11 @@
 import mysql, { FieldPacket, RowDataPacket } from "mysql2/promise";
 import { unstable_noStore as noStore } from "next/cache";
+import camelcaseKeys, { CamelCaseKeys } from "camelcase-keys";
 
 async function query<T>(
   query: string,
   values?: any,
-): Promise<[T, FieldPacket[]]> {
+): Promise<[CamelCaseKeys<T & RowDataPacket[], true>, FieldPacket[]]> {
   noStore();
   try {
     const connection = await mysql.createConnection({
@@ -22,7 +23,12 @@ async function query<T>(
 
     connection.end();
 
-    return [rows, fields];
+    const camelCasedRows = camelcaseKeys(rows, { deep: true }) as CamelCaseKeys<
+      T & RowDataPacket[],
+      true
+    >;
+
+    return [camelCasedRows, fields];
   } catch (error) {
     throw new Error("Failed to fetch data");
   }

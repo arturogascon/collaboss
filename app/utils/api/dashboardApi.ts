@@ -38,15 +38,11 @@ export interface Dashboard {
 }
 
 export async function getAllDashboardsFromUser(
-  email: string,
+  userId: string,
 ): Promise<Array<Dashboard> | undefined> {
   try {
-    const user = await getUserByEmail(email);
-    if (!user) {
-      throw new Error("User not found");
-    }
     const dashboardsResponse = await fetch(
-      process.env.BASE_URL + "/api/dashboard/user/" + user.id,
+      process.env.BASE_URL + "/api/dashboard/user/" + userId,
     );
 
     if (!dashboardsResponse.ok) {

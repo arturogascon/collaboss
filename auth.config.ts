@@ -8,13 +8,16 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      const isUnloggedUserRoute = /\/(login|signup)/.test(nextUrl.pathname);
+      const isRootRoute = nextUrl.pathname === "/";
+      const isUnloggedUserRoute = /^\/(login|signup)/.test(nextUrl.pathname);
 
-      if (isLoggedIn && isUnloggedUserRoute) {
+      if (isLoggedIn && (isUnloggedUserRoute || isRootRoute)) {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
 
-      const isOnProtectedRoute = /\/(profile|dashboard)/.test(nextUrl.pathname);
+      const isOnProtectedRoute = /^\/(profile|dashboard)/.test(
+        nextUrl.pathname,
+      );
       return isOnProtectedRoute ? !!isLoggedIn : true;
     },
     async redirect({ url, baseUrl }) {
