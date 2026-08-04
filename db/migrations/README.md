@@ -6,6 +6,7 @@ Plain, hand-run SQL files documenting how to create the schema — there is no m
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0001_create_users_table.sql
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0002_create_dashboards_table.sql
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0003_create_cards_table.sql
+docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0004_add_description_color_updated_at_to_dashboards.sql
 ```
 
 Requires MySQL 8.0.13+ (`mysql:8`, per `docker-compose.yml`) for the `DEFAULT (UUID())` expression on the `id` columns.
