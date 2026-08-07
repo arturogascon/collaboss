@@ -10,7 +10,7 @@ export async function GET(
   const { userId } = params;
 
   const dashboardsData = await query<RowDataPacket[]>(
-    "SELECT id, user_id, title, date FROM dashboards WHERE user_id = ?;",
+    "SELECT id, user_id, title, created_date FROM dashboards WHERE user_id = ?;",
     [userId],
   );
   return Response.json({ data: dashboardsData });

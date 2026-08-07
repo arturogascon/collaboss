@@ -7,6 +7,7 @@ docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migratio
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0002_create_dashboards_table.sql
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0003_create_cards_table.sql
 docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0004_add_description_color_updated_at_to_dashboards.sql
+docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0005_rename_dashboards_date_add_cards_timestamps.sql
 ```
 
 Requires MySQL 8.0.13+ (`mysql:8`, per `docker-compose.yml`) for the `DEFAULT (UUID())` expression on the `id` columns.

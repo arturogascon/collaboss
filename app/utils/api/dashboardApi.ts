@@ -24,7 +24,7 @@ export interface Dashboard {
   id: number;
   userId: number;
   title: string;
-  date: string;
+  created_date: string;
 }
 
 export async function getAllDashboardsFromUser(
