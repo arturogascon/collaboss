@@ -31,6 +31,14 @@ const config: Config = {
           outline: "#2B1B4D",
           border: "#E7E9F2",
           canvas: "#F8F9FC",
+          color: {
+            blue: "#4DA3FF",
+            purple: "#A855F7",
+            green: "#4CD37B",
+            pink: "#FF6FB5",
+            orange: "#FFA94D",
+            teal: "#2DD4BF",
+          },
         },
       },
       fontFamily: {
