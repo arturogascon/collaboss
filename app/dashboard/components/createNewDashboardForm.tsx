@@ -1,12 +1,17 @@
 "use client";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useActionState } from "react";
 import Button from "@/app/components/buttons/Button";
 import Input from "@/app/components/inputs/Input";
-import { createDashboard } from "@/app/utils/serverActions/dashboardActions";
+import Textarea from "@/app/components/inputs/Textarea";
+import ColorPicker from "@/app/components/inputs/ColorPicker";
+import ErrorBanner from "@/app/components/banners/ErrorBanner";
+import {
+  createDashboard,
+  CreateDashboardState,
+} from "@/app/utils/serverActions/dashboardActions";
 
-const initialState = {
-  message: "",
+const initialState: CreateDashboardState = {
   error: undefined,
 };
 
@@ -19,43 +24,43 @@ export default function CreateNewDashboardForm({
 }: CreateNewDashboardFormProps) {
   const [state, formAction] = useActionState(createDashboard, initialState);
   const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
-  useEffect(() => {
-    if (state.message) {
-      setTitle("");
-    }
-
-    return () => {
-      setTitle("");
-    };
-  }, [state]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
+  };
+
+  const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
   };
 
   return (
     <form
       action={formAction}
-      className="mt-4 flex w-full flex-col gap-3 rounded-2xl border-[1.5px] border-brand-border bg-white p-4"
+      className="mx-auto flex w-full flex-col gap-[18px] rounded-3xl border-[1.5px] border-brand-border bg-white p-5 shadow-sm sm:max-w-[560px] sm:gap-[22px] sm:p-8 lg:max-w-[640px] lg:gap-6 lg:p-10"
     >
-      {state.error && (
-        <p className="font-body text-xs font-medium text-brand-coral">
-          {state.error}
-        </p>
-      )}
+      {state.error && <ErrorBanner message={state.error} />}
       <input type="text" name="userId" hidden defaultValue={userId} />
       <Input
         type="text"
         name="title"
         label="Title"
         value={title}
-        onChange={handleChange}
+        onChange={handleTitleChange}
         autoComplete="off"
+        placeholder="e.g. Marketing Launch"
       />
-      <Button type="submit" className="self-end">
-        Create
-      </Button>
+      <Textarea
+        name="description"
+        label="Description"
+        value={description}
+        onChange={handleDescriptionChange}
+        placeholder="What's this dashboard for? Add any context your team should know."
+      />
+      <ColorPicker name="color" label="Color" />
+      <div className="flex justify-end">
+        <Button type="submit">Create</Button>
+      </div>
     </form>
   );
 }

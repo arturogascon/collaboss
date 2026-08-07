@@ -15,6 +15,7 @@ type Props = {
   value?: string | number;
   defaultValue?: string | number;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
   required?: boolean;
   disabled?: boolean;
   autoComplete?: "on" | "off";
@@ -39,6 +40,7 @@ export default function Input({
   onChange,
   value,
   defaultValue,
+  placeholder,
   required = false,
   disabled = false,
   autoComplete = "off",
@@ -57,6 +59,7 @@ export default function Input({
         value={value}
         defaultValue={defaultValue}
         onChange={onChange}
+        placeholder={placeholder}
         required={required}
         disabled={disabled}
         autoComplete={autoComplete}

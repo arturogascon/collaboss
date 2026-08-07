@@ -3,9 +3,9 @@
 --
 -- `description` and `color` are nullable: existing rows have neither, and the
 -- app falls back to a computed color when `color` is NULL.
--- `color` stores a short key (e.g. "purple", "mint", "coral", "gold",
--- "purple-dark") rather than a hex value or CSS class, so the UI stays free
--- to change how each key is rendered.
+-- `color` stores a short key (one of "blue", "purple", "green", "pink",
+-- "orange", "teal") rather than a hex value or CSS class, so the UI stays
+-- free to change how each key is rendered.
 
 ALTER TABLE dashboards
   ADD COLUMN description TEXT NULL DEFAULT NULL AFTER title,

@@ -20,11 +20,10 @@ export default async function Dashboard() {
   const shouldCreateNewDashboard = dashboards.length < MAX_DASHBOARDS;
 
   return dashboards.length === 0 ? (
-    <EmptyDashboardsState userId={session.user.id} />
+    <EmptyDashboardsState />
   ) : (
     <DashboardsOverview
       dashboards={dashboards}
-      userId={session.user.id}
       showCreateTile={shouldCreateNewDashboard}
     />
   );
