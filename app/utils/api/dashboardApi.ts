@@ -1,5 +1,5 @@
-import { CardType, getCardsData } from "@/app/utils/api/cardApi";
-import { getUserByEmail } from "../db/users";
+import { CardType, getCardsById } from "@/app/utils/db/cards";
+import { getDashboardTitleById } from "@/app/utils/db/dashboards";
 interface DashBoardData {
   title: string;
   cards: Array<CardType>;
@@ -8,26 +8,16 @@ interface DashBoardData {
 export async function getDashboardData(
   id: number,
 ): Promise<DashBoardData | undefined> {
-  try {
-    const dashboardData = await fetch(
-      process.env.BASE_URL + "/api/dashboard/" + id,
-    );
-    const cards = await getCardsData(id);
-    const dashboard = await dashboardData.json();
+  const [title, cards] = await Promise.all([
+    getDashboardTitleById(id),
+    getCardsById(id),
+  ]);
 
-    if (!dashboard || !dashboard.data || !dashboard.data[0][0]) {
-      return undefined;
-    }
-
-    const { title } = dashboard?.data[0][0];
-
-    return {
-      title,
-      cards,
-    };
-  } catch (error) {
+  if (!title) {
     return undefined;
   }
+
+  return { title, cards };
 }
 
 export interface Dashboard {

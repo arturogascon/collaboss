@@ -8,6 +8,19 @@ export type NewDashboard = {
   color: string | null;
 };
 
+export async function getDashboardTitleById(
+  id: number,
+): Promise<string | undefined> {
+  const [rows] = await query<RowDataPacket[]>(
+    `SELECT title FROM dashboards
+      WHERE id = ?
+      LIMIT 1;`,
+    [id],
+  );
+
+  return rows[0]?.title;
+}
+
 export async function doesDashboardTitleExists(
   userId: string,
   title: string,

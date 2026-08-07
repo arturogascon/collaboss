@@ -1,8 +1,8 @@
 "use client";
-import { MouseEventHandler, useState } from "react";
-import { CardType, deleteCard } from "@/app/utils/api/cardApi";
+import { MouseEventHandler, useActionState, useState } from "react";
+import type { CardType } from "@/app/utils/db/cards";
+import { deleteCard } from "@/app/utils/serverActions/cardActions";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { TiTimesOutline, TiPencil } from "react-icons/ti";
 import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
 import styles from "./card.module.css";
@@ -10,6 +10,10 @@ import styles from "./card.module.css";
 type CardProps = CardType & {
   dashboardId: number;
   onEdit: MouseEventHandler<HTMLButtonElement>;
+};
+
+const initialDeleteState = {
+  message: "",
 };
 
 export default function Card({
@@ -21,13 +25,8 @@ export default function Card({
   onEdit,
 }: CardProps) {
   const [isExpandedImg, setIsExpandedImg] = useState<boolean>(true);
+  const [, deleteFormAction] = useActionState(deleteCard, initialDeleteState);
 
-  const router = useRouter();
-
-  const handleDelete = async () => {
-    await deleteCard(id, dashboardId);
-    router.refresh();
-  };
   return (
     <div className="m-3 w-72 h-fit rounded-2xl inline-block border-2 border-solid border-purple-light/15 text-left w-[250px] shadow-lg overflow-hidden text-purple">
       <div
@@ -68,9 +67,13 @@ export default function Card({
           <button onClick={onEdit}>
             <TiPencil size="1.5rem" color="inherit" />
           </button>
-          <button onClick={handleDelete}>
-            <TiTimesOutline size="2rem" color="inherit" />
-          </button>
+          <form action={deleteFormAction}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="dashboardId" value={dashboardId} />
+            <button type="submit">
+              <TiTimesOutline size="2rem" color="inherit" />
+            </button>
+          </form>
         </div>
       </div>
     </div>

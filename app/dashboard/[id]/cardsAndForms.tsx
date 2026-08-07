@@ -4,7 +4,7 @@ import slugify from 'slugify';
 import Card from '@/app/components/card/card';
 import CreateCardButton from '@/app/components/forms/createCardButton';
 import EditCardForm from '@/app/components/forms/editCardForm';
-import {CardType} from '@/app/utils/api/cardApi';
+import type {CardType} from '@/app/utils/db/cards';
 
 interface CardsAndFormsProps {
   cards: Array<CardType>;

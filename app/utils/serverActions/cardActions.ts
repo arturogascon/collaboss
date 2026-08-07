@@ -92,3 +92,16 @@ export async function editCard(prevState: any, formData: FormData) {
     message: 'Success',
   };
 }
+
+export async function deleteCard(prevState: any, formData: FormData) {
+  const id = formData.get('id') as string;
+  const dashboardId = formData.get('dashboardId') as string;
+
+  await query<RowDataPacket[]>(`DELETE FROM cards WHERE id = ?;`, [id]);
+
+  revalidatePath('/dashboard/' + dashboardId);
+
+  return {
+    message: 'Success',
+  };
+}

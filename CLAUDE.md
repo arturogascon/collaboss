@@ -32,7 +32,7 @@ This starts a `mysql:8` container named `mysql-local` on port 3306, using `DB_PA
 ### Two parallel data-access paths — this is the main thing to know
 
 - **Reads** go through internal API routes under `app/api/**/route.ts`, called via `fetch(process.env.BASE_URL + "/api/...")` from `app/utils/api/*.ts` (`cardApi.ts`, `dashboardApi.ts`). Even server components fetch these routes over HTTP using the absolute `BASE_URL` rather than calling `app/utils/db/query.ts` directly.
-- **Writes** (create/edit card, create dashboard, auth) go through Server Actions in `app/utils/serverActions/*.ts`, marked `"use server"`, invoked directly from form `action` props, and finished with `revalidatePath(...)` to refresh the affected route. Card delete is the exception — it's a `DELETE` API route called via `fetch` from `cardApi.ts` (`deleteCard`).
+- **Writes** (create/edit/delete card, create dashboard, auth) go through Server Actions in `app/utils/serverActions/*.ts`, marked `"use server"`, invoked directly from form `action` props, and finished with `revalidatePath(...)` to refresh the affected route.
 
 When adding a new read, prefer an API route + fetch wrapper in `app/utils/api/`. When adding a new write, prefer a server action in `app/utils/serverActions/` that calls `revalidatePath` on the affected page.
 

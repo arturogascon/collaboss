@@ -5,7 +5,7 @@ import { editCard } from "@/app/utils/serverActions/cardActions";
 import Button from "@/app/components/buttons/Button";
 import ImagePicker from "@/app/components/inputs/imagePicker";
 import { useActionState } from "react";
-import { CardType } from "@/app/utils/api/cardApi";
+import type { CardType } from "@/app/utils/db/cards";
 import Input from "../inputs/Input";
 
 interface EditCardFormProps {
