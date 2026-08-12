@@ -59,7 +59,7 @@ Handled inside the `createCard`/`editCard` server actions (`app/utils/serverActi
 
 ### Styling
 
-Tailwind CSS is the primary styling mechanism (`tailwind.config.ts` defines custom `purple`, `purple-light`, `green-light`, `green-dark` colors). One component (`app/components/card/card.tsx`) also uses a CSS Module (`card.module.css`).
+Tailwind CSS is the primary styling mechanism (`tailwind.config.ts` defines custom `purple`, `purple-light`, `green-light`, `green-dark` colors, plus a `brand` palette used by the newer dashboard/card UI).
 
 ### Path alias
 

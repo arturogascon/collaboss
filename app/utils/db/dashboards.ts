@@ -8,17 +8,23 @@ export type NewDashboard = {
   color: string | null;
 };
 
-export async function getDashboardTitleById(
+export type DashboardDetails = {
+  title: string;
+  description: string | null;
+  color: string | null;
+};
+
+export async function getDashboardById(
   id: number,
-): Promise<string | undefined> {
+): Promise<DashboardDetails | undefined> {
   const [rows] = await query<RowDataPacket[]>(
-    `SELECT title FROM dashboards
+    `SELECT title, description, color FROM dashboards
       WHERE id = ?
       LIMIT 1;`,
     [id],
   );
 
-  return rows[0]?.title;
+  return rows[0] as DashboardDetails | undefined;
 }
 
 export async function doesDashboardTitleExists(

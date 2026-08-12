@@ -1,23 +1,25 @@
 import { CardType, getCardsById } from "@/app/utils/db/cards";
-import { getDashboardTitleById } from "@/app/utils/db/dashboards";
+import { getDashboardById } from "@/app/utils/db/dashboards";
 interface DashBoardData {
   title: string;
+  description: string | null;
+  color: string | null;
   cards: Array<CardType>;
 }
 
 export async function getDashboardData(
   id: number,
 ): Promise<DashBoardData | undefined> {
-  const [title, cards] = await Promise.all([
-    getDashboardTitleById(id),
+  const [dashboard, cards] = await Promise.all([
+    getDashboardById(id),
     getCardsById(id),
   ]);
 
-  if (!title) {
+  if (!dashboard) {
     return undefined;
   }
 
-  return { title, cards };
+  return { ...dashboard, cards };
 }
 
 export interface Dashboard {

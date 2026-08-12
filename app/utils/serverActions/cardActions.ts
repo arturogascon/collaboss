@@ -1,107 +1,87 @@
-'use server';
-import slugify from 'slugify';
-import fs from 'node:fs';
-import {query} from '@/app/utils/db/query';
-import {RowDataPacket} from 'mysql2';
-import {revalidatePath} from 'next/cache';
+"use server";
+import { revalidatePath } from "next/cache";
+import { CreateCardSchema } from "@/app/schemas/card.schema";
+import { saveCardImage } from "@/app/utils/cards/cardImage";
+import { deleteCardById, insertCard, updateCard } from "@/app/utils/db/cards";
 
-type Card = {
-  dashboardId: string;
-  id: string | null;
-  title: string;
-  description: string;
-  image: File | string;
+export type CreateCardState = {
+  error?: string;
+  success?: boolean;
 };
 
-const createCardData = async (formData: FormData) => {
-  const card: Card = {
-    dashboardId: formData.get('dashboardId') as string,
-    id: formData.get('id') as string | null,
-    title: formData.get('title') as string,
-    description: formData.get('description') as string,
-    image: formData.get('card-image') as File,
-  };
+export async function createCard(
+  prevState: CreateCardState,
+  formData: FormData,
+): Promise<CreateCardState> {
+  const rawData = Object.fromEntries(formData.entries());
+  const result = CreateCardSchema.safeParse(rawData);
 
-  if ((card.image as File).size > 0) {
-    let [fileName, extension] = (card.image as File).name.split('.');
-    fileName = `${slugify(fileName)}.${extension}`;
+  if (!result.success) {
+    return {
+      error: result.error.issues[0].message,
+    };
+  }
 
-    const stream = fs.createWriteStream(`public/images/${fileName}`);
-    const bufferedImage = await(card.image as File).arrayBuffer();
+  const { dashboardId, title, description, color } = result.data;
+  const image = formData.get("card-image") as File;
 
-    stream.write(Buffer.from(bufferedImage), (error) => {
-      if (error) {
-        throw new Error('Saving image failed!');
-      }
+  let imagePath: string;
+  try {
+    imagePath = await saveCardImage(image);
+  } catch (error) {
+    return {
+      error: "Server Error: Failed to process the uploaded image",
+    };
+  }
+
+  try {
+    await insertCard({
+      dashboardId,
+      title,
+      description,
+      image: imagePath || null,
+      color,
     });
-
-    card.image = `/images/${fileName}`;
-  } else {
-    card.image = '';
+  } catch (error) {
+    return {
+      error: "Server Error: Failed to create card",
+    };
   }
 
-  return card;
-};
-
-export async function createCard(prevState: any, formData: FormData) {
-  const card = await createCardData(formData);
-
-  if (card.image) {
-    await query<RowDataPacket[]>(
-      `INSERT INTO cards (dashboard_id, title, description, image) 
-  VALUES (?, ?, ?, ?);`,
-      [card.dashboardId, card.title, card.description, card.image]
-    );
-  } else {
-    await query<RowDataPacket[]>(
-      `INSERT INTO cards (dashboard_id, title, description) 
-  VALUES (?, ?, ?, ?);`,
-      [card.dashboardId, card.title, card.description]
-    );
-  }
-
-  revalidatePath('/dashboard/' + card.dashboardId);
+  revalidatePath("/dashboard/" + dashboardId);
 
   return {
-    message: 'Success',
+    success: true,
   };
 }
 
 export async function editCard(prevState: any, formData: FormData) {
-  const card = await createCardData(formData);
+  const id = formData.get("id") as string;
+  const dashboardId = formData.get("dashboardId") as string;
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const image = formData.get("card-image") as File;
 
-  if (card.image) {
-    await query<RowDataPacket[]>(
-      `UPDATE cards 
-    SET title = ?, description = ?, image = ?
-  WHERE id = ?;`,
-      [card.title, card.description, card.image, card.id]
-    );
-  } else {
-    await query<RowDataPacket[]>(
-      `UPDATE cards 
-    SET title = ?, description = ?
-  WHERE id = ?;`,
-      [card.title, card.description, card.id]
-    );
-  }
+  const imagePath = await saveCardImage(image);
 
-  revalidatePath('/dashboard/' + card.dashboardId);
+  await updateCard({ id, title, description, image: imagePath || null });
+
+  revalidatePath("/dashboard/" + dashboardId);
 
   return {
-    message: 'Success',
+    message: "Success",
   };
 }
 
 export async function deleteCard(prevState: any, formData: FormData) {
-  const id = formData.get('id') as string;
-  const dashboardId = formData.get('dashboardId') as string;
+  const id = formData.get("id") as string;
+  const dashboardId = formData.get("dashboardId") as string;
 
-  await query<RowDataPacket[]>(`DELETE FROM cards WHERE id = ?;`, [id]);
+  await deleteCardById(id);
 
-  revalidatePath('/dashboard/' + dashboardId);
+  revalidatePath("/dashboard/" + dashboardId);
 
   return {
-    message: 'Success',
+    message: "Success",
   };
 }

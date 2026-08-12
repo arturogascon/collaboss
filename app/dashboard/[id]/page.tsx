@@ -15,12 +15,14 @@ export default async function Dashboard(props: {
     notFound();
   }
 
-  const { cards, title } = dashboard;
+  const { cards, title, description } = dashboard;
 
   return (
-    <div className="text-center text-purple">
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <CardsAndForms dashboardId={id} cards={cards} />
-    </div>
+    <CardsAndForms
+      dashboardId={id}
+      title={title}
+      description={description}
+      cards={cards}
+    />
   );
 }
