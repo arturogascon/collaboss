@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { logOut } from "@/app/utils/serverActions/authActions";
-import { auth } from "@/auth";
 
 type Route = {
   name: string;
@@ -14,15 +13,15 @@ type Props = {
 
 export default function HeaderRoutes({ routes, onClick }: Props) {
   return (
-    <div className="absolute top-[56px] left-0 w-full  z-10 text-purple">
+    <div className="absolute left-0 top-[56px] z-10 w-full text-brand-ink">
       <form
         action={logOut}
-        className="text-center bg-green-light divide-y-2 divide-slate-200 divide-solid"
+        className="divide-y divide-brand-border bg-white text-center shadow-lg"
       >
         {routes.map((route) => (
           <div
             key={route.name}
-            className="h-12 text-center bg-green-light hover:bg-green-dark"
+            className="h-12 bg-white text-center hover:bg-brand-canvas"
           >
             {!/logout/i.test(route.name) ? (
               <Link
@@ -36,8 +35,7 @@ export default function HeaderRoutes({ routes, onClick }: Props) {
             ) : (
               <button
                 type="submit"
-                className="cursor-pointer bl
-                ock h-full w-full leading-[3rem]"
+                className="block h-full w-full cursor-pointer leading-[3rem]"
               >
                 Log Out
               </button>

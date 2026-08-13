@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
-import { getUser } from "@/app/utils/db/users";
+import { getUserByEmail } from "@/app/utils/db/users";
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -10,7 +10,7 @@ export const { auth, signIn, signOut } = NextAuth({
     Credentials({
       async authorize(credentials) {
         const { email, password } = credentials;
-        const user = await getUser(email as string);
+        const user = await getUserByEmail(email as string);
 
         if (!user) {
           return null;
@@ -18,7 +18,7 @@ export const { auth, signIn, signOut } = NextAuth({
 
         const passwordsMatch = await bcrypt.compare(
           password as string,
-          user.password
+          user.password,
         );
         if (passwordsMatch) return user;
 
@@ -27,14 +27,18 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks,
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.username = user.username;
       }
+
       return token;
     },
     session({ session, token }) {
       session.user.id = token.id as string;
+      session.user.username = token.username as string;
       return session;
     },
   },

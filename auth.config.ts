@@ -8,29 +8,30 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      const isUnloggedUserRoute = /\/(login|signup)/.test(nextUrl.pathname);
+      const isRootRoute = nextUrl.pathname === "/";
+      const isUnloggedUserRoute = /^\/(login|signup)/.test(nextUrl.pathname);
 
-      if (isLoggedIn && isUnloggedUserRoute) {
+      if (isLoggedIn && (isUnloggedUserRoute || isRootRoute)) {
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
 
-      // when adding dashboard id's, consider adding \/(create|list)
-      const isOnProtectedRoute = /\/(profile|dashboard)/.test(nextUrl.pathname);
+      const isOnProtectedRoute = /^\/(profile|dashboard)/.test(
+        nextUrl.pathname,
+      );
       return isOnProtectedRoute ? !!isLoggedIn : true;
     },
     async redirect({ url, baseUrl }) {
-      const searchParams = new URLSearchParams(url);
-      const callbackUrl = searchParams.get("callbackUrl");
-
-      if (callbackUrl) {
-        return callbackUrl;
-      } else {
+      try {
+        const urlObj = new URL(url, baseUrl);
+        const callbackUrl = urlObj.searchParams.get("callbackUrl");
+        return callbackUrl || baseUrl + "/profile";
+      } catch {
         return baseUrl + "/profile";
       }
     },
   },
-  providers: [], // Add providers with an empty array for now
+  providers: [],
   session: {
-    maxAge: 3600,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
   },
 } satisfies NextAuthConfig;

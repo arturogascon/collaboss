@@ -1,51 +1,30 @@
 import { auth } from "@/auth";
-import {
-  Dashboard as DashboardType,
-  getAllDashboardsFromUser,
-} from "../utils/api/dashboardApi";
-import Link from "next/link";
-import slugify from "slugify";
-import CreatNewDashboard from "./components/creatNewDashboardForm";
+import { getAllDashboardsFromUser } from "../utils/api/dashboardApi";
+import { redirect } from "next/navigation";
+import DashboardsOverview from "./components/dashboardsOverview";
+import EmptyDashboardsState from "./components/emptyDashboardsState";
 
-type Props = {};
-
-export default async function Dashboard({}: Props) {
+export default async function Dashboard() {
   const session = await auth();
-  let dashboards: Array<DashboardType> | undefined;
 
-  if (session?.user?.email) {
-    dashboards = await getAllDashboardsFromUser(session.user.email);
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+  const dashboards = await getAllDashboardsFromUser(session.user.id);
+
+  if (!dashboards) {
+    throw new Error("Failed to fetch dashboards");
   }
 
-  if (!dashboards || !dashboards.length) {
-    return (
-      <div>
-        <p>No dashboards created</p>
-      </div>
-    );
-  }
+  const MAX_DASHBOARDS = 6;
+  const shouldCreateNewDashboard = dashboards.length < MAX_DASHBOARDS;
 
-  const { userId } = dashboards[0];
-
-  const maxDashboardsLength = dashboards.length < 6;
-  const shouldCreateNewDashboard = maxDashboardsLength && userId;
-
-  return (
-    <div>
-      <p className="mb-4">Here are your dashboards links:</p>
-
-      <ul className="px-3 mb-4">
-        {dashboards.map((dashboard, index) => (
-          <li
-            key={`${slugify(dashboard.title)}-${index}`}
-            className="cursor-pointer font-semibold hover:underline"
-          >
-            <Link href={"/dashboard/" + dashboard.id}>{dashboard.title}</Link>
-          </li>
-        ))}
-      </ul>
-
-      {shouldCreateNewDashboard && <CreatNewDashboard userId={userId} />}
-    </div>
+  return dashboards.length === 0 ? (
+    <EmptyDashboardsState />
+  ) : (
+    <DashboardsOverview
+      dashboards={dashboards}
+      showCreateTile={shouldCreateNewDashboard}
+    />
   );
 }

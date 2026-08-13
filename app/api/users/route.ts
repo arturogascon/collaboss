@@ -1,6 +1,6 @@
 /* import {NextResponse} from 'next/server';
 import {RowDataPacket} from 'mysql2';
-import {query} from '@/app/lib/db';
+import {query} from '@/app/utils/db/query';
 
 export async function GET() {
   const [users] = await query<RowDataPacket[]>('SELECT * from users;');

@@ -1,53 +1,52 @@
-import { CardType, getCardsData } from "@/app/utils/api/cardApi";
-import { getUser } from "../db/users";
+import { CardType, getCardsById } from "@/app/utils/db/cards";
+import { getDashboardById } from "@/app/utils/db/dashboards";
 interface DashBoardData {
   title: string;
+  description: string | null;
+  color: string | null;
   cards: Array<CardType>;
 }
 
 export async function getDashboardData(
-  id: number
+  id: number,
 ): Promise<DashBoardData | undefined> {
-  try {
-    const dashboardData = await fetch(
-      process.env.BASE_URL + "/api/dashboard/" + id
-    );
-    const cards = await getCardsData(id);
-    const dashboard = await dashboardData.json();
+  const [dashboard, cards] = await Promise.all([
+    getDashboardById(id),
+    getCardsById(id),
+  ]);
 
-    if (!dashboard || !dashboard.data || !dashboard.data[0][0]) {
-      return undefined;
-    }
-
-    const { title } = dashboard?.data[0][0];
-
-    return {
-      title,
-      cards,
-    };
-  } catch (error) {
+  if (!dashboard) {
     return undefined;
   }
+
+  return { ...dashboard, cards };
 }
 
 export interface Dashboard {
   id: number;
   userId: number;
   title: string;
-  date: string;
+  created_date: string;
 }
 
 export async function getAllDashboardsFromUser(
-  email: string
+  userId: string,
 ): Promise<Array<Dashboard> | undefined> {
   try {
-    const user = await getUser(email);
-    if (!user) {
-      throw new Error("User not found");
-    }
     const dashboardsResponse = await fetch(
-      process.env.BASE_URL + "/api/dashboard/user/" + user.id
+      process.env.BASE_URL + "/api/dashboard/user/" + userId,
     );
+
+    if (!dashboardsResponse.ok) {
+      const errorText = await dashboardsResponse.text();
+      console.error(
+        "Dashboard API error:",
+        dashboardsResponse.status,
+        errorText,
+      );
+      throw new Error("Failed to fetch dashboards");
+    }
+
     const dashboardsData = await dashboardsResponse.json();
 
     return dashboardsData.data[0];

@@ -1,15 +1,20 @@
 "use client";
-import { MouseEventHandler, useState } from "react";
-import { CardType, deleteCard } from "@/app/utils/api/cardApi";
+import { MouseEventHandler, useActionState } from "react";
+import type { CardType } from "@/app/utils/db/cards";
+import { deleteCard } from "@/app/utils/serverActions/cardActions";
+import { COLOR_OPTIONS } from "@/app/components/inputs/colorOptions";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { TiTimesOutline, TiPencil } from "react-icons/ti";
-import { MdOutlineExpandMore, MdOutlineExpandLess } from "react-icons/md";
-import styles from "./card.module.css";
+import { LuPencil, LuTrash2 } from "react-icons/lu";
 
 type CardProps = CardType & {
   dashboardId: number;
+  color: string | null;
   onEdit: MouseEventHandler<HTMLButtonElement>;
+};
+
+const initialDeleteState = {
+  error: "",
+  success: false,
 };
 
 export default function Card({
@@ -18,60 +23,59 @@ export default function Card({
   title,
   description,
   dashboardId,
+  color,
   onEdit,
 }: CardProps) {
-  const [isExpandedImg, setIsExpandedImg] = useState<boolean>(true);
+  const [deleteState, deleteFormAction] = useActionState(
+    deleteCard,
+    initialDeleteState,
+  );
 
-  const router = useRouter();
+  const accentClassName =
+    COLOR_OPTIONS.find((option) => option.key === color)?.swatchClassName ??
+    COLOR_OPTIONS[0].swatchClassName;
 
-  const handleDelete = async () => {
-    await deleteCard(id, dashboardId);
-    router.refresh();
-  };
   return (
-    <div className="m-3 w-72 h-fit rounded-2xl inline-block border-2 border-solid border-purple-light/15 text-left w-[250px] shadow-lg overflow-hidden text-purple">
-      <div
-        className={`size-[250px] relative transition-all duration-500 ${
-          isExpandedImg ? "" : styles.hide
-        }`}
-      >
-        <Image
-          fill
-          src={image}
-          alt={title}
-          className="mx-auto"
-          style={{ objectFit: "cover" }}
-        />
+    <div className="flex flex-col overflow-hidden rounded-[20px] border-[1.5px] border-brand-border bg-white shadow-sm transition hover:shadow-md">
+      <span className={`h-1.5 w-full shrink-0 ${accentClassName}`} />
+      <div className="relative h-[150px] w-auto bg-white">
+        {image && (
+          <Image src={image} alt={title} fill className="object-contain" />
+        )}
       </div>
-      {image && (
-        <button
-          className={`w-full flex items-center justify-center text-sm ${
-            isExpandedImg ? "" : "mt-1"
-          }`}
-          onClick={() => setIsExpandedImg(!isExpandedImg)}
-        >
-          {isExpandedImg ? (
-            <>
-              <span>Hide</span> <MdOutlineExpandLess size="1.5rem" />
-            </>
-          ) : (
-            <>
-              <span>Show</span> <MdOutlineExpandMore size="1.5rem" />
-            </>
-          )}
-        </button>
-      )}
-      <div className="p-3">
-        <h6 className="font-semibold">{title}</h6>
-        <p className="mb-1">{description}</p>
-        <div className="flex flex-row justify-between">
-          <button onClick={onEdit}>
-            <TiPencil size="1.5rem" color="inherit" />
+      <div className="flex flex-col gap-2.5 p-5">
+        <h3 className="truncate font-heading text-lg font-bold text-brand-ink">
+          {title}
+        </h3>
+        <p className="h-[63px] overflow-hidden font-body text-sm leading-relaxed text-brand-ink-soft">
+          {description}
+        </p>
+        <div className="flex items-center justify-end gap-1 pt-1">
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label="Edit card"
+            className="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-brand-purple/10"
+          >
+            <LuPencil className="h-4 w-4 text-brand-purple" />
           </button>
-          <button onClick={handleDelete}>
-            <TiTimesOutline size="2rem" color="inherit" />
-          </button>
+          <form action={deleteFormAction}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="dashboardId" value={dashboardId} />
+            <button
+              type="submit"
+              aria-label="Delete card"
+              className="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-brand-coral/10"
+            >
+              <LuTrash2 className="h-4 w-4 text-brand-coral" />
+            </button>
+          </form>
         </div>
+        {deleteState.error && (
+          <p className="text-right text-xs text-brand-coral">
+            {deleteState.error}
+          </p>
+        )}
       </div>
     </div>
   );

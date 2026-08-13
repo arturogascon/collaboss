@@ -1,0 +1,76 @@
+import { query } from "@/app/utils/db/query";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
+
+export type NewDashboard = {
+  userId: string;
+  title: string;
+  description: string | null;
+  color: string | null;
+};
+
+export type DashboardDetails = {
+  title: string;
+  description: string | null;
+  color: string | null;
+};
+
+export async function getDashboardById(
+  id: number,
+): Promise<DashboardDetails | undefined> {
+  const [rows] = await query<RowDataPacket[]>(
+    `SELECT title, description, color FROM dashboards
+      WHERE id = ?
+      LIMIT 1;`,
+    [id],
+  );
+
+  return rows[0] as DashboardDetails | undefined;
+}
+
+export async function doesDashboardTitleExists(
+  userId: string,
+  title: string,
+): Promise<boolean> {
+  const result = await query<RowDataPacket[]>(
+    `SELECT EXISTS(
+        SELECT 1 FROM dashboards WHERE user_id = ? AND title = ?
+      ) AS titleExists;`,
+    [userId, title],
+  );
+
+  return Boolean(result[0][0].titleExists);
+}
+
+export async function insertDashboard(
+  newDashboard: NewDashboard,
+): Promise<void> {
+  await query<RowDataPacket[]>(
+    `INSERT INTO dashboards (user_id, title, description, color)
+      VALUES (?, ?, ?, ?);`,
+    [
+      newDashboard.userId,
+      newDashboard.title,
+      newDashboard.description,
+      newDashboard.color,
+    ],
+  );
+}
+
+export type UpdatedDashboard = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
+export async function updateDashboard(
+  updatedDashboard: UpdatedDashboard,
+): Promise<boolean> {
+  const [result] = await query<ResultSetHeader>(
+    `UPDATE dashboards
+      SET title = ?, description = ?
+      WHERE id = ?;`,
+    [updatedDashboard.title, updatedDashboard.description, updatedDashboard.id],
+  );
+
+  return (result as unknown as ResultSetHeader).affectedRows > 0;
+}

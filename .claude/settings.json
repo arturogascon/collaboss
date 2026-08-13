@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node \"C:/Users/centi/AppData/Local/Temp/claude/c--Users-centi-Documents-js-development-collaboss/86241cee-ac21-41aa-95b3-ed4bb1396e7c/scratchpad/check-signup-css.js\")",
+      "Bash(rm -f \"C:/Users/centi/AppData/Local/Temp/claude/c--Users-centi-Documents-js-development-collaboss/86241cee-ac21-41aa-95b3-ed4bb1396e7c/scratchpad/check-signup-css.js\")",
+      "Bash(npx eslint *)"
+    ]
+  }
+}

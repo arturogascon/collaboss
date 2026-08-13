@@ -1,16 +1,17 @@
 "use client";
 import React, { MouseEventHandler } from "react";
-import { TiThMenu } from "react-icons/ti";
+import { FiMenu } from "react-icons/fi";
 
 type Props = { handleClick: MouseEventHandler<HTMLButtonElement> };
 
 export default function MobileMenu({ handleClick }: Props) {
   return (
     <button
-      className="lg:hidden inline-block text-purple size-8 bg-contain bg-no-repeat bg-center cursor-pointer hover:opacity-50"
+      className="inline-flex cursor-pointer items-center justify-center text-brand-ink hover:opacity-60"
       onClick={handleClick}
+      aria-label="Toggle menu"
     >
-      <TiThMenu size="2rem" color="inherit" />
+      <FiMenu size={22} />
     </button>
   );
 }
