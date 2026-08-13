@@ -1,16 +1,16 @@
 import type { ReactNode } from "react";
 
-type DashboardPageHeaderProps = {
+type PageHeaderProps = {
   title: string;
   subtitle?: string;
   action?: ReactNode;
 };
 
-export default function DashboardPageHeader({
+export default function PageHeader({
   title,
   subtitle,
   action,
-}: DashboardPageHeaderProps) {
+}: PageHeaderProps) {
   return (
     <div className="flex items-start justify-between gap-4 sm:gap-5">
       <div className="flex flex-col gap-1.5 sm:gap-2">

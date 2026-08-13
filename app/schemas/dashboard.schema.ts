@@ -26,3 +26,18 @@ export const CreateDashboardSchema = z.object({
 });
 
 export type CreateDashboardFormValues = z.infer<typeof CreateDashboardSchema>;
+
+export const EditDashboardSchema = z.object({
+  id: z.string().min(1, "Dashboard id is required"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(255, "Title must be at most 255 characters"),
+  description: z
+    .string()
+    .max(2000, "Description must be at most 2000 characters")
+    .optional()
+    .transform((value) => (value ? value : null)),
+});
+
+export type EditDashboardFormValues = z.infer<typeof EditDashboardSchema>;

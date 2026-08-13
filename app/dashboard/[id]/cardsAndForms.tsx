@@ -5,7 +5,8 @@ import { LuLayoutGrid, LuPencil } from "react-icons/lu";
 import Card from "@/app/components/card/card";
 import CreateCardButton from "@/app/components/forms/createCardButton";
 import EditCardForm from "@/app/components/forms/editCardForm";
-import DashboardPageHeader from "@/app/dashboard/components/dashboardPageHeader";
+import PageHeader from "@/app/dashboard/components/pageHeader";
+import EditDashboardForm from "@/app/dashboard/components/editDashboardForm";
 import EmptyStatePanel from "@/app/components/emptyState/EmptyStatePanel";
 import type { CardType } from "@/app/utils/db/cards";
 
@@ -25,6 +26,7 @@ export default function CardsAndForms({
   const [editFormCardId, setEditFormCardId] = useState<undefined | number>(
     undefined,
   );
+  const [isEditingDashboard, setIsEditingDashboard] = useState(false);
 
   const currentCardData = cards.find((card) => card.id === editFormCardId);
 
@@ -45,14 +47,23 @@ export default function CardsAndForms({
           onClose={() => setEditFormCardId(undefined)}
         />
       )}
+      {isEditingDashboard && (
+        <EditDashboardForm
+          dashboardId={dashboardId}
+          title={title}
+          description={description}
+          onClose={() => setIsEditingDashboard(false)}
+        />
+      )}
       <div className="flex flex-col gap-4 sm:gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <DashboardPageHeader
+        <PageHeader
           title={title}
           subtitle={description ?? undefined}
           action={
             <button
               type="button"
               aria-label="Edit dashboard"
+              onClick={() => setIsEditingDashboard(true)}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-purple/10 transition hover:bg-brand-purple/20 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
             >
               <LuPencil className="h-4 w-4 text-brand-purple sm:h-[18px] sm:w-[18px] lg:h-5 lg:w-5" />

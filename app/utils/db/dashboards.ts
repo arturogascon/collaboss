@@ -1,5 +1,5 @@
 import { query } from "@/app/utils/db/query";
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export type NewDashboard = {
   userId: string;
@@ -54,4 +54,23 @@ export async function insertDashboard(
       newDashboard.color,
     ],
   );
+}
+
+export type UpdatedDashboard = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
+export async function updateDashboard(
+  updatedDashboard: UpdatedDashboard,
+): Promise<boolean> {
+  const [result] = await query<ResultSetHeader>(
+    `UPDATE dashboards
+      SET title = ?, description = ?
+      WHERE id = ?;`,
+    [updatedDashboard.title, updatedDashboard.description, updatedDashboard.id],
+  );
+
+  return (result as unknown as ResultSetHeader).affectedRows > 0;
 }

@@ -1,5 +1,5 @@
 import type { Dashboard } from "@/app/utils/api/dashboardApi";
-import DashboardPageHeader from "./dashboardPageHeader";
+import PageHeader from "./pageHeader";
 import DashboardCard, { DASHBOARD_ICON_COLORS } from "./dashboardCard";
 import CreateNewDashboard from "./createNewDashboard";
 
@@ -14,7 +14,7 @@ export default function DashboardsOverview({
 }: DashboardsOverviewProps) {
   return (
     <div className="flex flex-col gap-7 sm:gap-8 lg:gap-10">
-      <DashboardPageHeader
+      <PageHeader
         title="Your Dashboards"
         subtitle="Jump back into a dashboard, or start something new."
       />

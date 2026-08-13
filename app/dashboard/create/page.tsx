@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import DashboardPageHeader from "@/app/dashboard/components/dashboardPageHeader";
+import PageHeader from "@/app/dashboard/components/pageHeader";
 import CreateNewDashboardForm from "@/app/dashboard/components/createNewDashboardForm";
 
 export default async function CreateDashboardPage() {
@@ -12,7 +12,7 @@ export default async function CreateDashboardPage() {
 
   return (
     <div className="flex flex-col gap-7 sm:gap-8 lg:gap-10">
-      <DashboardPageHeader
+      <PageHeader
         title="Create Dashboard"
         subtitle="Give your dashboard a title, description, and color so your team can spot it at a glance."
       />

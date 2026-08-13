@@ -1,12 +1,12 @@
 import { LuLayoutDashboard } from "react-icons/lu";
-import DashboardPageHeader from "./dashboardPageHeader";
+import PageHeader from "./pageHeader";
 import CreateNewDashboard from "./createNewDashboard";
 import EmptyStatePanel from "@/app/components/emptyState/EmptyStatePanel";
 
 export default function EmptyDashboardsState() {
   return (
     <div className="flex flex-col gap-7 sm:gap-8 lg:gap-10">
-      <DashboardPageHeader
+      <PageHeader
         title="Your Dashboards"
         subtitle="Create your first dashboard to get started."
       />
