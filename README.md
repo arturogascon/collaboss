@@ -7,8 +7,8 @@ Each dashboard is made up of cards (a title, a description, and an optional imag
 ## Features
 
 - Sign up / log in with email and password
-- Create dashboards for any collaborative event or list
-- Add, edit, and delete cards on a dashboard, with optional images
+- Create dashboards for any collaborative event or list, with a description and color
+- Add, edit, and delete cards on a dashboard, with optional images and colors
 - Personal profile and dashboard overview per user
 
 ## Getting Started
@@ -16,7 +16,7 @@ Each dashboard is made up of cards (a title, a description, and an optional imag
 ### Prerequisites
 
 - Node.js
-- Docker (for the local MySQL database)
+- Docker (for the local MySQL database) — on Windows and macOS this means **Docker Desktop must be running** before you use `docker-compose`/`docker`; the CLI commands below will fail to connect otherwise.
 
 ### 1. Set up the database
 
@@ -26,7 +26,13 @@ Copy `.env.example` to `.env` and fill in the values (`DB_HOST`, `DB_USER`, `DB_
 docker-compose up -d
 ```
 
-This starts a MySQL 8 container on port 3306. The app connects to a database named `collaboss`, so make sure that schema exists with `users`, `dashboards`, and `cards` tables before running the app.
+This starts a MySQL 8 container (`mysql-local`) on port 3306. There is no migration runner in this project — the app connects to a database named `collaboss`, and its schema (`users`, `dashboards`, `cards` tables) must be created by hand-running the SQL files in [`db/migrations`](db/migrations) in numeric order, e.g.:
+
+```bash
+docker exec -i mysql-local mysql -uroot -p"$DB_PASSWORD" collaboss < db/migrations/0001_create_users_table.sql
+```
+
+See [`db/migrations/README.md`](db/migrations/README.md) for the full list of files and run order.
 
 ### 2. Install dependencies and run
 
@@ -42,4 +48,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [Next.js](https://nextjs.org/) (App Router) with React and TypeScript
 - [NextAuth](https://authjs.dev/) for authentication (credentials-based, with bcrypt password hashing)
 - MySQL via [mysql2](https://github.com/sidorares/node-mysql2)
+- [Zod](https://zod.dev/) for server action input validation
 - [Tailwind CSS](https://tailwindcss.com/) for styling
