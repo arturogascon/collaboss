@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { CreateCardSchema } from "@/app/schemas/card.schema";
+import { CreateCardSchema, EditCardSchema } from "@/app/schemas/card.schema";
 import { saveCardImage } from "@/app/utils/cards/cardImage";
 import { deleteCardById, insertCard, updateCard } from "@/app/utils/db/cards";
 
@@ -10,7 +10,7 @@ export type CreateCardState = {
 };
 
 export async function createCard(
-  prevState: CreateCardState,
+  _prevState: CreateCardState,
   formData: FormData,
 ): Promise<CreateCardState> {
   const rawData = Object.fromEntries(formData.entries());
@@ -55,33 +55,91 @@ export async function createCard(
   };
 }
 
-export async function editCard(prevState: any, formData: FormData) {
-  const id = formData.get("id") as string;
-  const dashboardId = formData.get("dashboardId") as string;
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const image = formData.get("card-image") as File;
+export type EditCardState = {
+  error?: string;
+  success?: boolean;
+};
 
-  const imagePath = await saveCardImage(image);
+export async function editCard(
+  _prevState: EditCardState,
+  formData: FormData,
+): Promise<EditCardState> {
+  const rawData = Object.fromEntries(formData.entries());
+  const result = EditCardSchema.safeParse(rawData);
 
-  await updateCard({ id, title, description, image: imagePath || null });
+  if (!result.success) {
+    return {
+      error: result.error.issues[0].message,
+    };
+  }
+
+  const { id, dashboardId, existingImage, title, description, color } =
+    result.data;
+  const image = formData.get("card-image");
+
+  let imagePath: string | null = existingImage || null;
+
+  if (image instanceof File && image.size > 0) {
+    try {
+      imagePath = await saveCardImage(image);
+    } catch (error) {
+      return {
+        error: "Server Error: Failed to process the uploaded image",
+      };
+    }
+  }
+
+  try {
+    await updateCard({ id, title, description, image: imagePath, color });
+  } catch (error) {
+    return {
+      error: "Server Error: Failed to update card",
+    };
+  }
 
   revalidatePath("/dashboard/" + dashboardId);
 
   return {
-    message: "Success",
+    success: true,
   };
 }
 
-export async function deleteCard(prevState: any, formData: FormData) {
+export type DeleteCardState = {
+  error?: string;
+  success?: boolean;
+};
+
+export async function deleteCard(
+  _prevState: DeleteCardState,
+  formData: FormData,
+): Promise<DeleteCardState> {
   const id = formData.get("id") as string;
   const dashboardId = formData.get("dashboardId") as string;
 
-  await deleteCardById(id);
+  if (!id) {
+    return {
+      error: "Card id is required",
+    };
+  }
+
+  let wasDeleted: boolean;
+  try {
+    wasDeleted = await deleteCardById(id);
+  } catch (error) {
+    return {
+      error: "Server Error: Failed to delete card",
+    };
+  }
+
+  if (!wasDeleted) {
+    return {
+      error: "Card not found",
+    };
+  }
 
   revalidatePath("/dashboard/" + dashboardId);
 
   return {
-    message: "Success",
+    success: true,
   };
 }

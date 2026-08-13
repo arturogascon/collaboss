@@ -69,7 +69,7 @@ export default function CardsAndForms({
           action={<CreateCardButton />}
         />
       ) : (
-        <div className="flex flex-col gap-3.5 sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        <div className="flex flex-col gap-3.5 sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
           {cards.map((card, index) => (
             <Card
               key={`${slugify(card.title)}-${index}`}

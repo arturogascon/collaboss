@@ -1,5 +1,5 @@
 import { query } from "@/app/utils/db/query";
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export type CardType = {
   id: number;
@@ -46,31 +46,29 @@ export type UpdatedCard = {
   title: string;
   description: string;
   image: string | null;
+  color: string;
 };
 
 export async function updateCard(updatedCard: UpdatedCard): Promise<void> {
-  if (updatedCard.image) {
-    await query<RowDataPacket[]>(
-      `UPDATE cards
-        SET title = ?, description = ?, image = ?
-        WHERE id = ?;`,
-      [
-        updatedCard.title,
-        updatedCard.description,
-        updatedCard.image,
-        updatedCard.id,
-      ],
-    );
-  } else {
-    await query<RowDataPacket[]>(
-      `UPDATE cards
-        SET title = ?, description = ?
-        WHERE id = ?;`,
-      [updatedCard.title, updatedCard.description, updatedCard.id],
-    );
-  }
+  await query<RowDataPacket[]>(
+    `UPDATE cards
+      SET title = ?, description = ?, image = ?, color = ?
+      WHERE id = ?;`,
+    [
+      updatedCard.title,
+      updatedCard.description,
+      updatedCard.image,
+      updatedCard.color,
+      updatedCard.id,
+    ],
+  );
 }
 
-export async function deleteCardById(id: string): Promise<void> {
-  await query<RowDataPacket[]>(`DELETE FROM cards WHERE id = ?;`, [id]);
+export async function deleteCardById(id: string): Promise<boolean> {
+  const [result] = await query<ResultSetHeader>(
+    `DELETE FROM cards WHERE id = ?;`,
+    [id],
+  );
+
+  return (result as unknown as ResultSetHeader).affectedRows > 0;
 }

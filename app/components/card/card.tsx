@@ -13,7 +13,8 @@ type CardProps = CardType & {
 };
 
 const initialDeleteState = {
-  message: "",
+  error: "",
+  success: false,
 };
 
 export default function Card({
@@ -25,7 +26,10 @@ export default function Card({
   color,
   onEdit,
 }: CardProps) {
-  const [, deleteFormAction] = useActionState(deleteCard, initialDeleteState);
+  const [deleteState, deleteFormAction] = useActionState(
+    deleteCard,
+    initialDeleteState,
+  );
 
   const accentClassName =
     COLOR_OPTIONS.find((option) => option.key === color)?.swatchClassName ??
@@ -34,9 +38,9 @@ export default function Card({
   return (
     <div className="flex flex-col overflow-hidden rounded-[20px] border-[1.5px] border-brand-border bg-white shadow-sm transition hover:shadow-md">
       <span className={`h-1.5 w-full shrink-0 ${accentClassName}`} />
-      <div className="relative h-[150px] w-full shrink-0 bg-white">
+      <div className="relative h-[150px] w-auto bg-white">
         {image && (
-          <Image src={image} alt={title} fill className="object-cover" />
+          <Image src={image} alt={title} fill className="object-contain" />
         )}
       </div>
       <div className="flex flex-col gap-2.5 p-5">
@@ -67,6 +71,11 @@ export default function Card({
             </button>
           </form>
         </div>
+        {deleteState.error && (
+          <p className="text-right text-xs text-brand-coral">
+            {deleteState.error}
+          </p>
+        )}
       </div>
     </div>
   );
