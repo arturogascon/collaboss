@@ -1,5 +1,11 @@
 import { CardType, getCardsById } from "@/app/utils/db/cards";
-import { getDashboardById } from "@/app/utils/db/dashboards";
+import {
+  DashboardSummary,
+  getDashboardById,
+  getDashboardsByUserId,
+} from "@/app/utils/db/dashboards";
+import { GetDashboardsByUserIdSchema } from "@/app/schemas/dashboard.schema";
+
 interface DashBoardData {
   title: string;
   description: string | null;
@@ -22,36 +28,16 @@ export async function getDashboardData(
   return { ...dashboard, cards };
 }
 
-export interface Dashboard {
-  id: number;
-  userId: number;
-  title: string;
-  created_date: string;
-}
+export type Dashboard = DashboardSummary;
 
 export async function getAllDashboardsFromUser(
   userId: string,
-): Promise<Array<Dashboard> | undefined> {
-  try {
-    const dashboardsResponse = await fetch(
-      process.env.BASE_URL + "/api/dashboard/user/" + userId,
-    );
+): Promise<Array<Dashboard>> {
+  const result = GetDashboardsByUserIdSchema.safeParse({ userId });
 
-    if (!dashboardsResponse.ok) {
-      const errorText = await dashboardsResponse.text();
-      console.error(
-        "Dashboard API error:",
-        dashboardsResponse.status,
-        errorText,
-      );
-      throw new Error("Failed to fetch dashboards");
-    }
-
-    const dashboardsData = await dashboardsResponse.json();
-
-    return dashboardsData.data[0];
-  } catch (error) {
-    console.log(error);
-    return undefined;
+  if (!result.success) {
+    throw new Error(result.error.issues[0].message);
   }
+
+  return getDashboardsByUserId(result.data.userId);
 }

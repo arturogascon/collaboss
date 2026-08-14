@@ -41,3 +41,7 @@ export const EditDashboardSchema = z.object({
 });
 
 export type EditDashboardFormValues = z.infer<typeof EditDashboardSchema>;
+
+export const GetDashboardsByUserIdSchema = z.object({
+  userId: z.string().min(1, "User id is required"),
+});

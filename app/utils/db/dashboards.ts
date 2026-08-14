@@ -13,6 +13,22 @@ export type DashboardDetails = {
   color: string | null;
 };
 
+export type DashboardSummary = {
+  id: string;
+  title: string;
+};
+
+export async function getDashboardsByUserId(
+  userId: string,
+): Promise<Array<DashboardSummary>> {
+  const [rows] = await query(
+    `SELECT id, title FROM dashboards WHERE user_id = $1;`,
+    [userId],
+  );
+
+  return rows as unknown as Array<DashboardSummary>;
+}
+
 export async function getDashboardById(
   id: number,
 ): Promise<DashboardDetails | undefined> {

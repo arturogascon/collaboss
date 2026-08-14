@@ -12,10 +12,6 @@ export default async function Dashboard() {
   }
   const dashboards = await getAllDashboardsFromUser(session.user.id);
 
-  if (!dashboards) {
-    throw new Error("Failed to fetch dashboards");
-  }
-
   const MAX_DASHBOARDS = 6;
   const shouldCreateNewDashboard = dashboards.length < MAX_DASHBOARDS;
 
