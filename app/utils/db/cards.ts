@@ -1,5 +1,4 @@
 import { query } from "@/app/utils/db/query";
-import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export type CardType = {
   id: number;
@@ -11,8 +10,8 @@ export type CardType = {
 };
 
 export async function getCardsById(id: number): Promise<Array<CardType>> {
-  const [cards] = await query<RowDataPacket[]>(
-    "SELECT * FROM cards WHERE dashboard_id = ?;",
+  const [cards] = await query(
+    "SELECT * FROM cards WHERE dashboard_id = $1;",
     [id],
   );
 
@@ -28,9 +27,9 @@ export type NewCard = {
 };
 
 export async function insertCard(newCard: NewCard): Promise<void> {
-  await query<RowDataPacket[]>(
+  await query(
     `INSERT INTO cards (dashboard_id, title, description, image, color)
-      VALUES (?, ?, ?, ?, ?);`,
+      VALUES ($1, $2, $3, $4, $5);`,
     [
       newCard.dashboardId,
       newCard.title,
@@ -50,10 +49,10 @@ export type UpdatedCard = {
 };
 
 export async function updateCard(updatedCard: UpdatedCard): Promise<void> {
-  await query<RowDataPacket[]>(
+  await query(
     `UPDATE cards
-      SET title = ?, description = ?, image = ?, color = ?
-      WHERE id = ?;`,
+      SET title = $1, description = $2, image = $3, color = $4
+      WHERE id = $5;`,
     [
       updatedCard.title,
       updatedCard.description,
@@ -65,10 +64,7 @@ export async function updateCard(updatedCard: UpdatedCard): Promise<void> {
 }
 
 export async function deleteCardById(id: string): Promise<boolean> {
-  const [result] = await query<ResultSetHeader>(
-    `DELETE FROM cards WHERE id = ?;`,
-    [id],
-  );
+  const [, rowCount] = await query(`DELETE FROM cards WHERE id = $1;`, [id]);
 
-  return (result as unknown as ResultSetHeader).affectedRows > 0;
+  return rowCount > 0;
 }

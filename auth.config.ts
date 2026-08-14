@@ -24,9 +24,16 @@ export const authConfig = {
       try {
         const urlObj = new URL(url, baseUrl);
         const callbackUrl = urlObj.searchParams.get("callbackUrl");
-        return callbackUrl || baseUrl + "/profile";
+
+        if (callbackUrl) {
+          const callbackUrlObj = new URL(callbackUrl, baseUrl);
+          if (callbackUrlObj.origin === baseUrl) {
+            return callbackUrlObj.toString();
+          }
+        }
+        return baseUrl + "/dashboard";
       } catch {
-        return baseUrl + "/profile";
+        return baseUrl + "/dashboard";
       }
     },
   },

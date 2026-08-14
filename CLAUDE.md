@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Collaboss — a Next.js 15 (App Router) app where users create dashboards containing "cards" (title, description, optional image). Auth is email/password via NextAuth v5 (beta). Data is stored in MySQL.
+Collaboss — a Next.js 15 (App Router) app where users create dashboards containing "cards" (title, description, optional image). Auth is email/password via NextAuth v5 (beta). Data is stored in PostgreSQL.
 
 ## Commands
 
@@ -19,13 +19,13 @@ There is no test suite configured in this repo (no test script/framework present
 
 ### Local database
 
-MySQL runs via Docker Compose:
+PostgreSQL runs via Docker Compose:
 
 ```bash
 docker-compose up -d
 ```
 
-This starts a `mysql:8` container named `mysql-local` on port 3306, using `DB_PASSWORD`/`DB_NAME` from the environment. The application itself hardcodes the schema name `collaboss` in `app/utils/db/query.ts` regardless of `DB_NAME`. Required env vars (see `.env.example`): `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `BASE_URL`, `BETTER_AUTH_SECRET` (used as the NextAuth secret despite the name). There is no migration tooling — schema must be created manually against the `collaboss` database (see table usage in `app/utils/db/query.ts` callers: `users`, `dashboards`, `cards`).
+This starts a `postgres:16` container named `postgres-local` on port 5432, using `DB_USER`/`DB_PASSWORD`/`DB_NAME` from the environment. The application itself hardcodes the database name `collaboss` in `app/utils/db/query.ts` regardless of `DB_NAME`. Required env vars (see `.env.example`): `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `BASE_URL`, `BETTER_AUTH_SECRET` (used as the NextAuth secret despite the name). There is no migration tooling — schema must be created manually against the `collaboss` database by hand-running the SQL files in `db/migrations` (see table usage in `app/utils/db/query.ts` callers: `users`, `dashboards`, `cards`).
 
 ## Architecture
 
@@ -38,7 +38,7 @@ When adding a new read, prefer an API route + fetch wrapper in `app/utils/api/`.
 
 ### Database access
 
-`app/utils/db/query.ts` exports a single `query<T>(sql, values)` helper that opens a **new** MySQL connection per call (via `mysql2/promise`), runs the query with named placeholders enabled, and closes the connection. There is no connection pool. All SQL is written by hand (no ORM); parameters are passed positionally (`?`) even though `namedPlaceholders` is set on the connection.
+`app/utils/db/query.ts` exports a single `query<T>(sql, values)` helper that opens a **new** PostgreSQL connection per call (via `pg`'s `Client`), runs the query, and closes the connection. There is no connection pool. All SQL is written by hand (no ORM); parameters are passed positionally (`$1`, `$2`, ...). Column names returned from Postgres are folded to lowercase for any unquoted/mixed-case alias, so aliases in hand-written SQL use `snake_case` (e.g. `AS title_exists`) and rely on `camelcaseKeys` to convert results to camelCase in JS.
 
 ### Auth
 
