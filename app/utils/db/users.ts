@@ -1,13 +1,12 @@
 import { query } from "@/app/utils/db/query";
 import { UserType } from "@/app/schemas/user.schema";
-import { RowDataPacket } from "mysql2";
 import { User } from "../types/user.types";
 
 export async function getUserById(id: string): Promise<User | undefined> {
   try {
-    const user = await query<RowDataPacket[]>(
+    const user = await query(
       `SELECT * FROM users
-            WHERE id = ?`,
+            WHERE id = $1`,
       [id],
     );
     return user[0][0] as User;
@@ -18,9 +17,9 @@ export async function getUserById(id: string): Promise<User | undefined> {
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
-    const user = await query<RowDataPacket[]>(
+    const user = await query(
       `SELECT * FROM users
-            WHERE email = ?`,
+            WHERE email = $1`,
       [email],
     );
     return user[0][0] as User;
@@ -34,16 +33,16 @@ export async function saveNewUser({
   email,
   password,
 }: Omit<UserType, "id">): Promise<string> {
-  await query<RowDataPacket[]>(
-    `INSERT INTO users (username, email, password) 
-      VALUES (?, ?, ?);`,
+  await query(
+    `INSERT INTO users (username, email, password)
+      VALUES ($1, $2, $3);`,
     [username, email, password],
   );
 
-  const addedUserData = await query<RowDataPacket[]>(
+  const addedUserData = await query(
     `SELECT id
       FROM users
-      WHERE email = ?
+      WHERE email = $1
       LIMIT 1;`,
     [email],
   );
@@ -56,10 +55,10 @@ export async function updateUser({
   username,
   email,
 }: Partial<UserType>): Promise<void> {
-  await query<RowDataPacket[]>(
+  await query(
     `UPDATE users
-      SET username = ?, email = ?
-      WHERE id = ?;`,
+      SET username = $1, email = $2
+      WHERE id = $3;`,
     [username, email, id],
   );
 }
@@ -68,10 +67,10 @@ export async function updatePassword({
   id,
   password,
 }: Pick<UserType, "id" | "password">): Promise<void> {
-  await query<RowDataPacket[]>(
+  await query(
     `UPDATE users
-      SET password = ?
-      WHERE id = ?;`,
+      SET password = $1
+      WHERE id = $2;`,
     [password, id],
   );
 }

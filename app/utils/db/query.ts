@@ -1,36 +1,34 @@
-import mysql, { FieldPacket, RowDataPacket } from "mysql2/promise";
+import { Client, QueryResultRow } from "pg";
 import { unstable_noStore as noStore } from "next/cache";
 import camelcaseKeys, { CamelCaseKeys } from "camelcase-keys";
 
-async function query<T>(
-  query: string,
-  values?: any,
-): Promise<[CamelCaseKeys<T & RowDataPacket[], true>, FieldPacket[]]> {
+async function query<T extends QueryResultRow = any>(
+  text: string,
+  values?: any[],
+): Promise<[CamelCaseKeys<T[], true>, number]> {
   noStore();
   try {
-    const connection = await mysql.createConnection({
+    const client = new Client({
       host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: "collaboss",
     });
 
-    connection.config.namedPlaceholders = true;
-    const [rows, fields] = await connection.execute<T & RowDataPacket[]>(
-      query,
-      values,
-    );
+    await client.connect();
+    const { rows, rowCount } = await client.query<T>(text, values);
 
-    connection.end();
+    await client.end();
 
-    const camelCasedRows = camelcaseKeys(rows, { deep: true }) as CamelCaseKeys<
-      T & RowDataPacket[],
-      true
-    >;
+    const camelCasedRows = camelcaseKeys(rows, {
+      deep: true,
+    }) as CamelCaseKeys<T[], true>;
 
-    return [camelCasedRows, fields];
+    return [camelCasedRows, rowCount ?? 0];
   } catch (error) {
-    throw new Error("Failed to fetch data");
+    console.error("DB query error:", error);
+    throw error;
   }
 }
 

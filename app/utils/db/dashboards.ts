@@ -1,5 +1,4 @@
 import { query } from "@/app/utils/db/query";
-import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export type NewDashboard = {
   userId: string;
@@ -17,9 +16,9 @@ export type DashboardDetails = {
 export async function getDashboardById(
   id: number,
 ): Promise<DashboardDetails | undefined> {
-  const [rows] = await query<RowDataPacket[]>(
+  const [rows] = await query(
     `SELECT title, description, color FROM dashboards
-      WHERE id = ?
+      WHERE id = $1
       LIMIT 1;`,
     [id],
   );
@@ -31,10 +30,10 @@ export async function doesDashboardTitleExists(
   userId: string,
   title: string,
 ): Promise<boolean> {
-  const result = await query<RowDataPacket[]>(
+  const result = await query(
     `SELECT EXISTS(
-        SELECT 1 FROM dashboards WHERE user_id = ? AND title = ?
-      ) AS titleExists;`,
+        SELECT 1 FROM dashboards WHERE user_id = $1 AND title = $2
+      ) AS title_exists;`,
     [userId, title],
   );
 
@@ -44,9 +43,9 @@ export async function doesDashboardTitleExists(
 export async function insertDashboard(
   newDashboard: NewDashboard,
 ): Promise<void> {
-  await query<RowDataPacket[]>(
+  await query(
     `INSERT INTO dashboards (user_id, title, description, color)
-      VALUES (?, ?, ?, ?);`,
+      VALUES ($1, $2, $3, $4);`,
     [
       newDashboard.userId,
       newDashboard.title,
@@ -65,12 +64,12 @@ export type UpdatedDashboard = {
 export async function updateDashboard(
   updatedDashboard: UpdatedDashboard,
 ): Promise<boolean> {
-  const [result] = await query<ResultSetHeader>(
+  const [, rowCount] = await query(
     `UPDATE dashboards
-      SET title = ?, description = ?
-      WHERE id = ?;`,
+      SET title = $1, description = $2
+      WHERE id = $3;`,
     [updatedDashboard.title, updatedDashboard.description, updatedDashboard.id],
   );
 
-  return (result as unknown as ResultSetHeader).affectedRows > 0;
+  return rowCount > 0;
 }

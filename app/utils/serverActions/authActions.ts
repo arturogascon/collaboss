@@ -76,7 +76,7 @@ export async function signUp(
     throw error;
   }
 
-  redirect("/user/" + addedUserId);
+  redirect("/dashboard");
 }
 
 export async function logIn(_prevState: any, formData: FormData) {

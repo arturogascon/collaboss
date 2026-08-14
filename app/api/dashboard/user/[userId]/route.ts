@@ -1,5 +1,4 @@
 import { query } from "@/app/utils/db/query";
-import { RowDataPacket } from "mysql2";
 
 export async function GET(
   request: Request,
@@ -9,8 +8,8 @@ export async function GET(
 
   const { userId } = params;
 
-  const dashboardsData = await query<RowDataPacket[]>(
-    "SELECT id, user_id, title, created_date FROM dashboards WHERE user_id = ?;",
+  const dashboardsData = await query(
+    "SELECT id, user_id, title, created_date FROM dashboards WHERE user_id = $1;",
     [userId],
   );
   return Response.json({ data: dashboardsData });
