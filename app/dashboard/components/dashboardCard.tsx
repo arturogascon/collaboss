@@ -10,7 +10,7 @@ export const DASHBOARD_ICON_COLORS = [
 ];
 
 type DashboardCardProps = {
-  id: number;
+  id: string;
   title: string;
   colorClassName: string;
 };
