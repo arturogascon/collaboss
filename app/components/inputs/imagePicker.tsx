@@ -1,5 +1,5 @@
 'use client';
-import {ChangeEvent, MutableRefObject, useRef, useState} from 'react';
+import {ChangeEvent, useRef, useState} from 'react';
 import {LuImagePlus} from 'react-icons/lu';
 
 interface ImagePickerProps {
@@ -10,10 +10,10 @@ interface ImagePickerProps {
 
 export default function ImagePicker({label, name, value}: ImagePickerProps) {
   const [pickedImage, setPickedImage] = useState<string>(value || '');
-  const inputFileRef: MutableRefObject<(HTMLInputElement | null) | undefined> = useRef();
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
-    inputFileRef?.current?.click();
+    inputFileRef.current?.click();
   };
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ export default function ImagePicker({label, name, value}: ImagePickerProps) {
         accept="image/png, image/jpeg, image/webp"
         name={name}
         hidden
-        ref={inputFileRef as MutableRefObject<HTMLInputElement | null>}
+        ref={inputFileRef}
         onChange={handleImageChange}
       />
       <button
